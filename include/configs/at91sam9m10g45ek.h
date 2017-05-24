@@ -250,3 +250,5 @@
 #define CONFIG_SYS_MCKR_CSS		0x1302
 
 #endif
+
+#define CONFIG_CMD_RC4
