@@ -560,7 +560,7 @@ int spi_flash_cmd_read_ops(struct spi_flash *flash, u32 offset,
 			return ret;
 		bank_sel = flash->bank_curr;
 #endif
-		remain_len = ((SPI_FLASH_16MB_BOUN << flash->shift) *
+		remain_len = ((flash->size << flash->shift) *
 				(bank_sel + 1)) - offset;
 		if (len < remain_len)
 			read_len = len;
