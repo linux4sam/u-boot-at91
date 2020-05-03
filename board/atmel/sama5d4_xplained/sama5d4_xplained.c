@@ -210,3 +210,31 @@ void at91_pmc_init(void)
 	at91_mck_init(tmp);
 }
 #endif
+
+#if defined(CONFIG_OF_BOARD_SETUP)
+int ft_board_setup(void *fdt, gd_t *gd)
+{
+	static const char * const wilc_compatibles[] = {
+		"microchip,wilc1000", "microchip,wilc3000", "atmel,wilc_sdio",
+	};
+
+	const struct fdt_property *prop;
+	int i, offset, len, ret = 0;
+
+	for (i = 0; i < ARRAY_SIZE(wilc_compatibles); i++) {
+		offset = fdt_node_offset_by_compatible(fdt, -1,
+						       wilc_compatibles[i]);
+		if (offset < 0)
+			continue;
+
+		prop = fdt_get_property(fdt, offset, "cd-gpios", &len);
+		if (!prop)
+			break;
+
+		ret = fdt_delprop(fdt, offset, "cd-gpios");
+		break;
+	}
+
+	return ret;
+}
+#endif
