@@ -1,4 +1,58 @@
  # SPDX-License-Identifier: GPL-2.0+
+=======
+AT91 U-Boot Repository
+======================
+
+This is a fork of the U-Boot source code for the AT91 family of ARM
+microprocessors.
+
+https://www.microchip.com/design-centers/32-bit-mpus
+
+This repository is intended to make available a version of U-Boot that works on
+all our supported boards at all times. We try to keep this fork as close as
+possible to mainline U-Boot.
+
+The latest version of this repository can be found at:
+
+https://github.com/linux4sam/u-boot-at91
+
+Since U-Boot is closely related to Linux, please read section 3.1 of Microchip
+AN2772:
+
+"Linux® Basics and Solutions for Microprocessors"
+
+http://ww1.microchip.com/downloads/en/Appnotes/Linux-Basics-and-Solutions-for-Microprocessors-Application-Note-DS00002772A.pdf
+
+When porting U-Boot to a new board design which utilises a Microchip AT91 MPU,
+a typical developer workflow might be:
+
+1. With reference to https://developerhelp.microchip.com/xwiki/bin/view/applications/linux4sam/
+compile U-Boot for a supported evaluation board
+(e.g. an implementation of the same MPU that your new design targets).
+
+2. Test the output on the evaluation board.
+
+3. Add support for your new board to your fork of this repository.
+
+4. Repeat steps 1. and 2. against mainline U-Boot:
+
+https://gitlab.denx.de/u-boot/u-boot
+
+5. Compile and test your patch set against mainline U-Boot.
+
+6. Submit your patches to the U-Boot project.
+
+
+NOTE:
+
+1. You should send the patches which add support for your board to mainline
+U-Boot only.
+They will be integrated into this tree via the mainline repository.
+
+
+The text of the upstream U-Boot README follows...
+
+
 #
 # (C) Copyright 2000 - 2013
 # Wolfgang Denk, DENX Software Engineering, wd@denx.de.
