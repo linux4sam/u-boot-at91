@@ -484,21 +484,9 @@ static int pmecc_correction(struct mtd_info *mtd, u32 pmecc_stat, uint8_t *buf,
 {
 	struct nand_chip *nand_chip = mtd_to_nand(mtd);
 	struct atmel_nand_host *host = nand_get_controller_data(nand_chip);
-	int i, err_nbr, eccbytes;
-	uint8_t *buf_pos;
+	int i, err_nbr;
+	uint8_t *buf_pos, *ecc_pos;
 
-	/* SAMA5D4 PMECC IP can correct errors for all 0xff page */
-	if (host->pmecc_version >= PMECC_VERSION_SAMA5D4)
-		goto normal_check;
-
-	eccbytes = nand_chip->ecc.bytes;
-	for (i = 0; i < eccbytes; i++)
-		if (ecc[i] != 0xff)
-			goto normal_check;
-	/* Erased page, return OK */
-	return 0;
-
-normal_check:
 	for (i = 0; i < host->pmecc_sector_number; i++) {
 		err_nbr = 0;
 		if (pmecc_stat & 0x1) {
@@ -510,9 +498,26 @@ normal_check:
 
 			err_nbr = pmecc_err_location(mtd);
 			if (err_nbr == -1) {
-				dev_err(host->dev, "PMECC: Too many errors\n");
-				mtd->ecc_stats.failed++;
-				return -EBADMSG;
+				/* SAMA5D4 PMECC IP can correct errors for all 0xff page */
+				if (host->pmecc_version < PMECC_VERSION_SAMA5D4) {
+					ecc_pos = ecc + i * host->pmecc_bytes_per_sector;
+
+					err_nbr = nand_check_erased_ecc_chunk(
+						buf_pos, host->pmecc_sector_size,
+						ecc_pos, host->pmecc_bytes_per_sector,
+						NULL, 0, (host->pmecc_corr_cap * 3) / 4);
+
+					if (err_nbr < 0) {
+						dev_err(host->dev, "PMECC: Too many errors\n");
+						mtd->ecc_stats.failed++;
+						return -EBADMSG;
+					}
+					mtd->ecc_stats.corrected += err_nbr;
+				} else {
+					dev_err(host->dev, "PMECC: Too many errors\n");
+					mtd->ecc_stats.failed++;
+					return -EBADMSG;
+				}
 			} else {
 				pmecc_correct_data(mtd, buf_pos, ecc, i,
 					host->pmecc_bytes_per_sector, err_nbr);
