@@ -44,6 +44,18 @@
 		};
 	};
 
+	cpus {
+		#address-cells = <1>;
+		#size-cells = <0>;
+
+		A5_0: cpu@0 {
+			device_type = "cpu";
+			compatible = "arm,cortex-a5";
+			clocks = <&pmc PMC_TYPE_CORE ID_MCK_PRES>, <&pmc PMC_TYPE_CORE ID_MCK_DIV>, <&main_xtal>;
+			clock-names = "cpu", "master", "xtal";
+		};
+	};
+
 	ahb {
 		compatible = "simple-bus";
 		#address-cells = <1>;
