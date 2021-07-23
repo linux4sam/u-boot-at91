@@ -65,10 +65,12 @@ static int clk_programmable_set_parent(struct clk *clk, struct clk *parent)
 	if (index < 0)
 		return index;
 
-	index = at91_clk_mux_index_to_val(prog->mux_table, prog->num_parents,
-					  index);
-	if (index < 0)
-		return index;
+	if (prog->mux_table) {
+		index = at91_clk_mux_index_to_val(prog->mux_table,
+						  prog->num_parents, index);
+		if (index < 0)
+			return index;
+	}
 
 	if (layout->have_slck_mck)
 		mask |= AT91_PMC_CSSMCK_MCK;
@@ -138,7 +140,7 @@ struct clk *at91_clk_register_programmable(void __iomem *base, const char *name,
 	int ret;
 
 	if (!base || !name || !parent_names || !num_parents ||
-	    !layout || !clk_mux_table || !mux_table || id > PROG_ID_MAX)
+	    !layout || !clk_mux_table || id > PROG_ID_MAX)
 		return ERR_PTR(-EINVAL);
 
 	prog = kzalloc(sizeof(*prog), GFP_KERNEL);
@@ -156,9 +158,12 @@ struct clk *at91_clk_register_programmable(void __iomem *base, const char *name,
 	val = tmp & prog->layout->css_mask;
 	if (layout->have_slck_mck && (tmp & AT91_PMC_CSSMCK_MCK) && !val)
 		ret = PROG_MAX_RM9200_CSS + 1;
-	else
+	else if (prog->mux_table)
 		ret = at91_clk_mux_val_to_index(prog->mux_table,
 						prog->num_parents, val);
+	else
+		ret = val;
+
 	if (ret < 0) {
 		kfree(prog);
 		return ERR_PTR(ret);
