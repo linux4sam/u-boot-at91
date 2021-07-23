@@ -27,6 +27,7 @@
 #define MASTER_PRES_MAX		MASTER_PRES_MASK
 #define MASTER_DIV_SHIFT	8
 #define MASTER_DIV_MASK		0x7
+#define MASTER_CSS_MASK		0x3
 
 #define PMC_MCR			0x30
 #define PMC_MCR_ID_MSK		GENMASK(3, 0)
@@ -101,16 +102,38 @@ static ulong clk_master_pres_get_rate(struct clk *clk)
 	return DIV_ROUND_CLOSEST_ULL(rate, pres);
 }
 
+static int clk_master_set_parent(struct clk *clk, struct clk *parent)
+{
+	struct clk_master *master = to_clk_master(clk);
+	int index;
+
+	index = at91_clk_mux_val_to_index(master->clk_mux_table,
+					  master->num_parents, parent->id);
+	if (index < 0)
+		return index;
+
+	pmc_update_bits(master->base, master->layout->offset, MASTER_CSS_MASK,
+			index);
+
+	while (!clk_master_ready(master)) {
+		debug("waiting for mck %d\n", master->id);
+		cpu_relax();
+	}
+
+	return 0;
+}
+
 static const struct clk_ops master_pres_ops = {
 	.enable = clk_master_enable,
 	.get_rate = clk_master_pres_get_rate,
+	.set_parent = clk_master_set_parent,
 };
 
 struct clk *at91_clk_register_master_pres(void __iomem *base,
 		const char *name, const char * const *parent_names,
 		int num_parents, const struct clk_master_layout *layout,
 		const struct clk_master_characteristics *characteristics,
-		const u32 *mux_table)
+		const u32 *clk_mux_table)
 {
 	struct clk_master *master;
 	struct clk *clk;
@@ -118,7 +141,7 @@ struct clk *at91_clk_register_master_pres(void __iomem *base,
 	int ret;
 
 	if (!base || !name || !num_parents || !parent_names ||
-	    !layout || !characteristics || !mux_table)
+	    !layout || !characteristics || !clk_mux_table)
 		return ERR_PTR(-EINVAL);
 
 	master = kzalloc(sizeof(*master), GFP_KERNEL);
@@ -129,7 +152,7 @@ struct clk *at91_clk_register_master_pres(void __iomem *base,
 	master->characteristics = characteristics;
 	master->base = base;
 	master->num_parents = num_parents;
-	master->mux_table = mux_table;
+	master->clk_mux_table = clk_mux_table;
 
 	pmc_read(master->base, master->layout->offset, &val);
 	clk = &master->clk;
