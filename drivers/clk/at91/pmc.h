@@ -160,6 +160,16 @@ struct clk *
 at91_clk_sama7g5_register_utmi(void __iomem *base, const char *name,
 			const char *parent_name);
 struct clk *
+at91sam9x5_clk_register_usb(void __iomem *base, const char *name,
+			const char **parent_names, u8 num_parents,
+			u32 *clk_mux_table);
+struct clk *
+sam9x60_clk_register_usb(void __iomem *base, const char *name,
+			const char **parent_names, u8 num_parents);
+struct clk *
+at91sam9n12_clk_register_usb(void __iomem *base, const char *name,
+			const char *parent_name);
+struct clk *
 at91_clk_register_programmable(void __iomem *base, const char *name,
 			const char * const *parent_names, u8 num_parents, u8 id,
 			const struct clk_programmable_layout *layout,
