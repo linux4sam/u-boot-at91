@@ -113,6 +113,7 @@ at91_clk_register_pll(void __iomem *base, const char *name,
 struct clk *
 at91_clk_register_div(void __iomem *base, const char *name,
 			const char *parent_name, u32 bitmask);
+struct clk *
 sam9x60_clk_register_div_pll(void __iomem *base, const char *name,
 			const char *parent_name, u8 id,
 			const struct clk_pll_characteristics *characteristics,
@@ -143,6 +144,16 @@ at91_clk_register_utmi(void __iomem *base, struct udevice *dev,
 			const char *name, const char *parent_name);
 struct clk *
 at91_clk_sama7g5_register_utmi(void __iomem *base, const char *name,
+			const char *parent_name);
+struct clk *
+at91sam9x5_clk_register_usb(void __iomem *base, const char *name,
+			const char **parent_names, u8 num_parents,
+			u32 *clk_mux_table);
+struct clk *
+sam9x60_clk_register_usb(void __iomem *base, const char *name,
+			const char **parent_names, u8 num_parents);
+struct clk *
+at91sam9n12_clk_register_usb(void __iomem *base, const char *name,
 			const char *parent_name);
 struct clk *
 at91_clk_register_programmable(void __iomem *base, const char *name,
