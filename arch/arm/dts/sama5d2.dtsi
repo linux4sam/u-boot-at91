@@ -18,7 +18,7 @@
 		slow_xtal: slow_xtal {
 			compatible = "fixed-clock";
 			#clock-cells = <0>;
-			clock-frequency = <0>;
+			clock-frequency = <32768>;
 		};
 
 		main_xtal: main_xtal {
