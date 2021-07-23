@@ -249,9 +249,6 @@ static const struct {
 	{ .n = "prog1", .cid = ID_PROG1, },
 };
 
-/* Mux table for programmable clocks. */
-static u32 sam9x60_prog_mux_table[] = { 0, 1, 2, 3, 4, 5, };
-
 /**
  * System clock description
  * @n:			clock name
@@ -562,8 +559,7 @@ static int sam9x60_clk_probe(struct udevice *dev)
 
 		c = at91_clk_register_programmable(base, sam9x60_prog[i].n, p,
 						   10, i, &programmable_layout,
-						   tmpclkmux,
-						   sam9x60_prog_mux_table);
+						   tmpclkmux, NULL);
 		if (IS_ERR(c)) {
 			ret = PTR_ERR(c);
 			goto fail;
