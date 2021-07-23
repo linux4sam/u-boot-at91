@@ -110,6 +110,9 @@ at91_clk_register_pll(void __iomem *base, const char *name,
 			const char *parent_name, u8 id,
 			const struct clk_pll_layout *layout,
 			const struct clk_pll_characteristics *characteristics);
+struct clk *
+at91_clk_register_div(void __iomem *base, const char *name,
+			const char *parent_name, u32 bitmask);
 sam9x60_clk_register_div_pll(void __iomem *base, const char *name,
 			const char *parent_name, u8 id,
 			const struct clk_pll_characteristics *characteristics,

@@ -68,3 +68,10 @@ config AT91_PLL_CLK
 	help
 	  This option is used to enable PLL clock driver for SAM9X5, SAMA5D4,
 	  SAMA5D3, SAMA5D2 SoCs.
+
+config AT91_DIV_CLK
+	bool "DIV clock support for AT91 SoCs (SAM9X5, SAMA5D4, SAMA5D4, SAMA5D3)"
+	depends on CLK_AT91
+	help
+	  This option is used to enable PLL DIV or H32MX clock driver for
+	  SAM9X5, SAMA5D4, SAMA5D3, SAMA5D2 SoCs.
