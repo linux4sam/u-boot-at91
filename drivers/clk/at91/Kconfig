@@ -61,3 +61,10 @@ config AT91_SAM9X60_PLL
 	help
 	  This option is used to enable the AT91 SAM9X60's PLL clock
 	  driver.
+
+config AT91_PLL_CLK
+	bool "PLL support for AT91 SoCs (SAM9X5, SAMA5D4, SAMA5D4, SAMA5D3)"
+	depends on CLK_AT91
+	help
+	  This option is used to enable PLL clock driver for SAM9X5, SAMA5D4,
+	  SAMA5D3, SAMA5D2 SoCs.

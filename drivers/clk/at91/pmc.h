@@ -14,6 +14,11 @@
 #define AT91_TO_CLK_ID(_t, _i)		(((_t) << 8) | ((_i) & 0xff))
 #define AT91_CLK_ID_TO_DID(_i)		((_i) & 0xff)
 
+extern const struct clk_pll_layout at91rm9200_pll_layout;
+extern const struct clk_pll_layout at91sam9g45_pll_layout;
+extern const struct clk_pll_layout at91sam9g20_pllb_layout;
+extern const struct clk_pll_layout sama5d3_pll_layout;
+
 struct clk_range {
 	unsigned long min;
 	unsigned long max;
@@ -101,6 +106,10 @@ struct clk *at91_clk_sam9x5_main(void __iomem *reg, const char *name,
 			const char * const *parent_names, int num_parents,
 			const u32 *mux_table, int type);
 struct clk *
+at91_clk_register_pll(void __iomem *base, const char *name,
+			const char *parent_name, u8 id,
+			const struct clk_pll_layout *layout,
+			const struct clk_pll_characteristics *characteristics);
 sam9x60_clk_register_div_pll(void __iomem *base, const char *name,
 			const char *parent_name, u8 id,
 			const struct clk_pll_characteristics *characteristics,
