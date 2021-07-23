@@ -15,6 +15,7 @@ obj-$(CONFIG_AT91_DIV_CLK)	+= clk-div.o
 obj-$(CONFIG_AT91_USB_CLK)	+= clk-usb.o
 obj-$(CONFIG_SAMA7G5)		+= sama7g5.o
 obj-$(CONFIG_SAM9X60)		+= sam9x60.o
+obj-$(CONFIG_SAMA5D2)		+= sama5d2.o
 else
 obj-y += compat.o
 endif
