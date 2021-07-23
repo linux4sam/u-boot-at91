@@ -13,6 +13,7 @@
 #ifndef _DT_BINDINGS_CLK_AT91_H
 #define _DT_BINDINGS_CLK_AT91_H
 
+/* Clock type identifiers. */
 #define PMC_TYPE_CORE		1
 #define PMC_TYPE_SYSTEM		2
 #define PMC_TYPE_PERIPHERAL	3
