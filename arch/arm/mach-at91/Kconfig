@@ -189,6 +189,7 @@ config TARGET_SAMA5D27_SOM1_EK
 	select CPU_V7A
 	select SUPPORT_SPL
 	select ATMEL_SFR
+	select SAMA5D2
 	help
 	  The SAMA5D27 SOM1 embeds SAMA5D2 SiP(System in Package),
 	  a 64Mbit QSPI flash, KSZ8081 Phy and a Mac-address EEPROM
