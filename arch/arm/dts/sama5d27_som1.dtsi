@@ -57,6 +57,16 @@
 		spi0 = &qspi1;
 	};
 
+	clocks {
+		slow_xtal: slow_xtal {
+			clock-frequency = <32768>;
+		};
+
+		main_xtal: main_xtal {
+			clock-frequency = <24000000>;
+		};
+	};
+
 	ahb {
 		apb {
 			qspi1: spi@f0024000 {

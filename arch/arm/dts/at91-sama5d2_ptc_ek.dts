@@ -56,6 +56,16 @@
 		stdout-path = &uart0;
 	};
 
+	clocks {
+		slow_xtal: slow_xtal {
+			clock-frequency = <32768>;
+		};
+
+		main_xtal: main_xtal {
+			clock-frequency = <24000000>;
+		};
+	};
+
 	onewire_tm: onewire {
 		gpios = <&pioA PIN_PB31 GPIO_ACTIVE_HIGH>;
 		pinctrl-names = "default";

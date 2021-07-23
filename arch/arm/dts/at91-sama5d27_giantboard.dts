@@ -26,6 +26,16 @@
 		stdout-path = &uart1;
 	};
 
+	clocks {
+		slow_xtal: slow_xtal {
+			clock-frequency = <32768>;
+		};
+
+		main_xtal: main_xtal {
+			clock-frequency = <24000000>;
+		};
+	};
+
 	ahb {
 		sdmmc1: sdio-host@b0000000 {
 			bus-width = <4>;
