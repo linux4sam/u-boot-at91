@@ -31,7 +31,7 @@
 		slow_rc_osc: slow_rc_osc {
 			compatible = "fixed-clock";
 			#clock-cells = <0>;
-			clock-frequency = <18500>;
+			clock-frequency = <32000>;
 		};
 
 		main_rc: main_rc {
