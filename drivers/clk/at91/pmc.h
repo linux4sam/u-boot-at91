@@ -7,6 +7,7 @@
 #ifndef __AT91_PMC_H__
 #define __AT91_PMC_H__
 
+#include <dt-bindings/clk/at91.h>
 #include <linux/bitops.h>
 #include <linux/io.h>
 
