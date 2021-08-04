@@ -1,6 +1,7 @@
 /dts-v1/;
 #include <dt-bindings/gpio/gpio.h>
 #include "sama5d2.dtsi"
+#include "sama5d2-optee.dtsi"
 #include "sama5d2-pinfunc.h"
 
 / {

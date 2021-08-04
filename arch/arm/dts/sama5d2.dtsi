@@ -223,13 +223,13 @@
 				status = "disabled";
 			};
 
-			rstc@f8048000 {
+			rstc: rstc@f8048000 {
 				compatible = "atmel,sama5d3-rstc";
 				reg = <0xf8048000 0x10>;
 				clocks = <&clk32k>;
 			};
 
-			shdwc@f8048010 {
+			shdwc: shdwc@f8048010 {
 				compatible = "atmel,sama5d2-shdwc";
 				reg = <0xf8048010 0x10>;
 				clocks = <&clk32k>;
@@ -244,7 +244,7 @@
 				clocks = <&pmc PMC_TYPE_CORE ID_H32MX>;
 			};
 
-			watchdog@f8048040 {
+			watchdog: watchdog@f8048040 {
 				compatible = "atmel,sama5d4-wdt";
 				reg = <0xf8048040 0x10>;
 				clocks = <&clk32k>;
