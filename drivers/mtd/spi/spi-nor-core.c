@@ -4488,7 +4488,7 @@ static int spi_nor_soft_reset(struct spi_nor *nor)
 	ret = spi_mem_exec_op(nor->spi, &op);
 	if (ret) {
 		dev_warn(nor->dev, "Software reset enable failed: %d\n", ret);
-		goto out;
+		return ret;
 	}
 
 	op = (struct spi_mem_op)SPI_MEM_OP(SPI_MEM_OP_CMD(SPINOR_OP_SRST, 0),
@@ -4499,7 +4499,7 @@ static int spi_nor_soft_reset(struct spi_nor *nor)
 	ret = spi_mem_exec_op(nor->spi, &op);
 	if (ret) {
 		dev_warn(nor->dev, "Software reset failed: %d\n", ret);
-		goto out;
+		return ret;
 	}
 
 	/*
@@ -4509,9 +4509,7 @@ static int spi_nor_soft_reset(struct spi_nor *nor)
 	 */
 	udelay(SPI_NOR_SRST_SLEEP_LEN);
 
-out:
-	nor->cmd_ext_type = ext;
-	return ret;
+	return 0;
 }
 #endif /* CONFIG_SPI_FLASH_SOFT_RESET */
 
