@@ -71,6 +71,11 @@ struct flash_info {
 #define SPI_NOR_OCTAL_DTR_READ	BIT(17)	/* Flash supports Octal DTR Read */
 #define UNLOCK_GLOBAL_BLOCK	BIT(18)	/* Unlock global block protection */
 #define SECT_4K_ONLY		BIT(19)	/* Use only CMD_ERASE_4K */
+#define SPI_NOR_SOFT_RESET	BIT(20)	/*
+					 * Used by flashes that do not define
+					 * any SFDP tables, i.e. in conjunction
+					 * with SPI_NOR_SKIP_SFDP.
+					 */
 };
 
 extern const struct flash_info spi_nor_ids[];

@@ -4703,6 +4703,9 @@ int spi_nor_scan(struct spi_nor *nor)
 	if (info->flags & SPI_NOR_NO_ERASE)
 		mtd->flags |= MTD_NO_ERASE;
 
+	if (info->flags & SPI_NOR_SOFT_RESET)
+		nor->flags |= SNOR_F_SOFT_RESET;
+
 	nor->page_size = params.page_size;
 	mtd->writebufsize = nor->page_size;
 
