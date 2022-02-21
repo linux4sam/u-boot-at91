@@ -20,18 +20,13 @@ void at91_periph_clk_enable(int id)
 
 #ifdef CPU_HAS_PCR
 	u32 regval;
-	u32 div_value;
 
 	if (id > AT91_PMC_PCR_PID_MASK)
 		return;
 
 	writel(id, &pmc->pcr);
-
-	div_value = readl(&pmc->pcr) & AT91_PMC_PCR_DIV;
-
-	regval = AT91_PMC_PCR_EN | AT91_PMC_PCR_CMD_WRITE | id | div_value;
-
-	writel(regval, &pmc->pcr);
+	regval = readl(&pmc->pcr);
+	writel(regval | AT91_PMC_PCR_EN | AT91_PMC_PCR_CMD_WRITE, &pmc->pcr);
 #else
 	writel(0x01 << id, &pmc->pcer);
 #endif
