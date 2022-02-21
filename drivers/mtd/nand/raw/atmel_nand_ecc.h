@@ -57,7 +57,7 @@ struct pmecc_regs {
 
 	/* 0x40 + sector_num * (0x40), Redundancy Registers */
 	struct {
-#ifdef CONFIG_SAMA5D2
+#if defined(CONFIG_SAMA5D2) || defined(CONFIG_SAMA7G5)
 		u8 ecc[56];	/* PMECC Generated Redundancy Byte Per Sector */
 		u32 reserved1[2];
 #else
@@ -68,7 +68,7 @@ struct pmecc_regs {
 
 	/* 0x240 + sector_num * (0x40) Remainder Registers */
 	struct {
-#ifdef CONFIG_SAMA5D2
+#if defined(CONFIG_SAMA5D2) || defined(CONFIG_SAMA7G5)
 		u32 rem[16];
 #else
 		u32 rem[12];
@@ -129,7 +129,7 @@ struct pmecc_errloc_regs {
 	u32 elimr;	/* 0x0C Error Location Interrupt Mask Register */
 	u32 elisr;	/* 0x20 Error Location Interrupt Status Register */
 	u32 reserved0;	/* 0x24 Reserved */
-#ifdef CONFIG_SAMA5D2
+#if defined(CONFIG_SAMA5D2) || defined(CONFIG_SAMA7G5)
 	u32 sigma[33];	/* 0x28-0xA8 Error Location Sigma Registers */
 	u32 el[32];	/* 0xAC-0x128 Error Location Registers */
 
@@ -169,7 +169,7 @@ struct pmecc_errloc_regs {
 #define		PMERRLOC_DISABLE		(1 << 0)
 
 /* For Error Location Interrupt Status Register */
-#ifdef CONFIG_SAMA5D2
+#if defined(CONFIG_SAMA5D2) || defined(CONFIG_SAMA7G5)
 #define		PMERRLOC_ERR_NUM_MASK		(0x3f << 8)
 #else
 #define		PMERRLOC_ERR_NUM_MASK		(0x1f << 8)
