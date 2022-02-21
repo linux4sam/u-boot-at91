@@ -64,6 +64,7 @@ void at91_system_clk_disable(int sys_clk)
 	writel(sys_clk, &pmc->scdr);
 }
 
+#if !defined(CONFIG_SAMA7G5)
 int at91_upll_clk_enable(void)
 {
 	struct at91_pmc *pmc = (at91_pmc_t *)ATMEL_BASE_PMC;
@@ -116,3 +117,4 @@ void at91_pllicpr_init(u32 icpr)
 
 	writel(icpr, &pmc->pllicpr);
 }
+#endif

@@ -26,6 +26,55 @@
 #include <asm/types.h>
 #include <linux/bitops.h>
 
+#if defined(CONFIG_SAMA7G5)
+typedef struct at91_pmc {
+	u32	scer;		/* 0x00 System Clock Enable Register */
+	u32	scdr;		/* 0x04 System Clock Disable Register */
+	u32	scsr;		/* 0x08 System Clock Status Register */
+	u32	pll_ctrl0;	/* 0x0c PLL Control Register 0 */
+	u32	pll_ctrl1;	/* 0x10 PLL Control Register 1 */
+	u32	pll_ssr;	/* 0x1c PLL Spread Spectrum Register */
+	u32	pll_acr;	/* 0x18 PLL Analog Control Register */
+	u32	pll_updt;	/* 0x1c PLL Update Register */
+	u32	ckgr_mor;	/* 0x20 Clock Generator Main Oscillator Register */
+	u32	ckgr_mcfr;	/* 0x24 Clock Generator Main Clock Frequency Register */
+	u32	cpu_ckr;	/* 0x28 CPU Clock Register */
+	u32	cpu_ratio;	/* 0x2c CPU Clock Ratio Register */
+	u32	mcr;		/* 0x30 Main System Bus Clock Register */
+	u32	xtalf;		/* 0x34 Main XTAL Frequency Register */
+	u32	reserved0[2];
+	u32	pck[8];		/* 0x40 Programmable Clock Register 0 - 7 */
+	u32	ier;		/* 0x60 Interrupt Enable Register */
+	u32	idr;		/* 0x64 Interrupt Disable Register */
+	u32	sr;		/* 0x68 Status Register */
+	u32	imr;		/* 0x6c Interrupt Mask Register */
+	u32	fsmr;		/* 0x70 Fast Startup Mode Register */
+	u32	wcr;		/* 0x74 Wakeup Control Register */
+	u32	focr;		/* 0x78 Fault Output Clear Register */
+	u32	reserved1;
+	u32	wpmr;		/* 0x80 Write Protection Mode Register */
+	u32	wpsr;		/* 0x84 Write Protection Status Register */
+	u32	pcr;		/* 0x88 Peripheral Control Register */
+	u32	reserved2;
+	u32	slpwk_aipr;	/* 0x90 SleepWalking Activity In Progress Register */
+	u32	slpwkcr;	/* 0x94 SleepWalking Control Register */
+	u32	reserved3;
+	u32	mcklim;		/* 0x9c MCK0 Monitor Limits Register */
+	u32	csr0;		/* 0xa0 Peripheral Clock Status Register 0 */
+	u32	csr1;		/* 0xa4 Peripheral Clock Status Register 1 */
+	u32	csr2;		/* 0xa8 Peripheral Clock Status Register 2 */
+	u32	csr3;		/* 0xac Peripheral Clock Status Register 3 */
+	u32	gcsr0;		/* 0xc0 Generic Clock Status Register 0 */
+	u32	gcsr1;		/* 0xc4 Generic Clock Status Register 1 */
+	u32	gcsr2;		/* 0xc8 Generic Clock Status Register 2 */
+	u32	reserved5[5];
+	u32	pll_ier;	/* 0xe0 PLL Interrupt Enable Register */
+	u32	pll_idr;	/* 0xe4 PLL Interrupt Disable Register */
+	u32	pll_imr;	/* 0xe8 PLL Interrupt Mask Register */
+	u32	pll_isr0;	/* 0xec PLL Interrupt Status Register 0 */
+	u32	pll_isr1;	/* 0xec PLL Interrupt Status Register 1 */
+} at91_pmc_t;
+#else
 typedef struct at91_pmc {
 	u32	scer;		/* 0x00 System Clock Enable Register */
 	u32	scdr;		/* 0x04 System Clock Disable Register */
@@ -61,6 +110,7 @@ typedef struct at91_pmc {
 	u32	pcr;		/* 0x10c Periperial Control Register */
 	u32	ocr;		/* 0x110 Oscillator Calibration Register */
 } at91_pmc_t;
+#endif
 
 #endif	/* end not assembly */
 
@@ -160,7 +210,11 @@ typedef struct at91_pmc {
 #define		AT91_PMC_PCR_GCKCSS_UPLL_CLK	(0x3 << 8)
 #define		AT91_PMC_PCR_GCKCSS_MCK_CLK	(0x4 << 8)
 #define		AT91_PMC_PCR_GCKCSS_AUDIO_CLK	(0x5 << 8)
+#if defined(CONFIG_SAMA7G5)
+#define AT91_PMC_PCR_CMD_WRITE		(0x1 << 31)
+#else
 #define AT91_PMC_PCR_CMD_WRITE		(0x1 << 12)
+#endif
 #define AT91_PMC_PCR_DIV		(0x3 << 16)
 #define AT91_PMC_PCR_GCKDIV		(0xff << 20)
 #define AT91_PMC_PCR_GCKDIV_MASK	0xff
