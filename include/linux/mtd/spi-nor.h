@@ -234,6 +234,11 @@
 	 SNOR_PROTO_DATA_MASK)
 
 #define SNOR_PROTO_IS_DTR	BIT(24)	/* Double Transfer Rate */
+/*
+ * Byte order of 16-bit words is swapped when read or written in DTR mode
+ * compared to STR mode.
+ */
+#define SNOR_PROTO_IS_DTR_BSWAP16	BIT(25)
 
 #define SNOR_PROTO_STR(_inst_nbits, _addr_nbits, _data_nbits)	\
 	(SNOR_PROTO_INST(_inst_nbits) |				\
@@ -265,6 +270,18 @@ enum spi_nor_protocol {
 static inline bool spi_nor_protocol_is_dtr(enum spi_nor_protocol proto)
 {
 	return !!(proto & SNOR_PROTO_IS_DTR);
+}
+
+static inline bool spi_nor_protocol_is_octal_dtr(enum spi_nor_protocol proto)
+{
+	return ((proto & SNOR_PROTO_8_8_8_DTR) == SNOR_PROTO_8_8_8_DTR);
+}
+
+static inline bool spi_nor_protocol_is_dtr_bswap16(enum spi_nor_protocol proto)
+{
+	u32 mask = SNOR_PROTO_IS_DTR | SNOR_PROTO_IS_DTR_BSWAP16;
+
+	return ((proto & mask) == mask);
 }
 
 static inline u8 spi_nor_get_protocol_inst_nbits(enum spi_nor_protocol proto)
@@ -316,6 +333,7 @@ enum spi_nor_option_flags {
 	SNOR_F_HAS_STACKED	= 0,
 	SNOR_F_HAS_PARALLEL	= 0,
 #endif
+	SNOR_F_DTR_BSWAP16	= BIT(11),
 };
 
 struct spi_nor;

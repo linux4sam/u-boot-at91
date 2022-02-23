@@ -279,6 +279,9 @@ void spi_nor_setup_op(const struct spi_nor *nor,
 		op->cmd.dtr = op->addr.dtr = op->dummy.dtr =
 			op->data.dtr = true;
 
+		if (spi_nor_protocol_is_dtr_bswap16(proto))
+			op->data.dtr_bswap16 = true;
+
 		/* 2 bytes per clock cycle in DTR mode. */
 		op->dummy.nbytes *= 2;
 
@@ -478,7 +481,7 @@ static int read_sr(struct spi_nor *nor)
 	u8 val[2];
 	u8 addr_nbytes, dummy;
 
-	if (nor->reg_proto == SNOR_PROTO_8_8_8_DTR) {
+	if (spi_nor_protocol_is_octal_dtr(nor->reg_proto)) {
 		addr_nbytes = nor->rdsr_addr_nbytes;
 		dummy = nor->rdsr_dummy;
 	} else {
@@ -532,7 +535,7 @@ static int read_fsr(struct spi_nor *nor)
 	u8 val[2];
 	u8 addr_nbytes, dummy;
 
-	if (nor->reg_proto == SNOR_PROTO_8_8_8_DTR) {
+	if (spi_nor_protocol_is_octal_dtr(nor->reg_proto)) {
 		addr_nbytes = nor->rdsr_addr_nbytes;
 		dummy = nor->rdsr_dummy;
 	} else {
@@ -4343,8 +4346,8 @@ static int spi_nor_octal_dtr_enable(struct spi_nor *nor)
 	if (!nor->octal_dtr_enable)
 		return 0;
 
-	if (!(nor->read_proto == SNOR_PROTO_8_8_8_DTR &&
-	      nor->write_proto == SNOR_PROTO_8_8_8_DTR))
+	if (!(spi_nor_protocol_is_octal_dtr(nor->read_proto) &&
+	      spi_nor_protocol_is_octal_dtr(nor->write_proto)))
 		return 0;
 
 	if (!(nor->flags & SNOR_F_IO_MODE_EN_VOLATILE))
@@ -4583,6 +4586,18 @@ void spi_nor_set_fixups(struct spi_nor *nor)
 #endif /* SPI_FLASH_WINBOND */
 }
 
+static void spi_nor_set_dtr_bswap16_ops(struct spi_nor *nor,
+					struct spi_nor_flash_parameter *params)
+{
+	if (params->hwcaps.mask & (SNOR_HWCAPS_READ_8_8_8_DTR |
+				   SNOR_HWCAPS_PP_8_8_8_DTR)) {
+		params->reads[SNOR_CMD_READ_8_8_8_DTR].proto |=
+			SNOR_PROTO_IS_DTR_BSWAP16;
+		params->page_programs[SNOR_CMD_PP_8_8_8_DTR].proto |=
+			SNOR_PROTO_IS_DTR_BSWAP16;
+	}
+}
+
 int spi_nor_scan(struct spi_nor *nor)
 {
 	struct spi_nor_flash_parameter params;
@@ -4675,6 +4690,9 @@ int spi_nor_scan(struct spi_nor *nor)
 
 	if (info->flags & SPI_NOR_SOFT_RESET)
 		nor->flags |= SNOR_F_SOFT_RESET;
+
+	if (nor->flags & SNOR_F_DTR_BSWAP16)
+		spi_nor_set_dtr_bswap16_ops(nor, &params);
 
 	nor->page_size = params.page_size;
 	mtd->writebufsize = nor->page_size;
