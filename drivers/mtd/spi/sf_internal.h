@@ -76,6 +76,10 @@ struct flash_info {
 					 * any SFDP tables, i.e. in conjunction
 					 * with SPI_NOR_SKIP_SFDP.
 					 */
+#define SPI_NOR_DTR_BSWAP16	BIT(21) /* The byte order of 16-bit words is
+					 * swapped when read or written in DTR
+					 * mode compared to STR mode.
+					 */
 };
 
 extern const struct flash_info spi_nor_ids[];
