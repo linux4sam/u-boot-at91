@@ -13,9 +13,34 @@
 
 /* Environment options */
 
+#if defined(CONFIG_CMD_DHCP)
+#define BOOT_TARGET_DEVICES_DHCP(func)	func(DHCP, dhcp, na)
+#else
+#define BOOT_TARGET_DEVICES_DHCP(func)
+#endif
+
+#if defined(CONFIG_CMD_MMC)
+#define BOOT_TARGET_DEVICES_MMC(func)	func(MMC, mmc, 0)
+#else
+#define BOOT_TARGET_DEVICES_MMC(func)
+#endif
+
+#if defined(CONFIG_CMD_UBIFS)
+#define BOOT_TARGET_DEVICE_UBIFS(func) func(UBIFS, ubifs, 0, ubi, rootfs)
+#else
+#define BOOT_TARGET_DEVICE_UBIFS(func)
+#endif
+
+#if defined(CONFIG_MPFS_PRIORITISE_QSPI_BOOT)
 #define BOOT_TARGET_DEVICES(func) \
-	func(MMC, mmc, 0) \
-	func(DHCP, dhcp, na)
+	BOOT_TARGET_DEVICE_UBIFS(func)	\
+	BOOT_TARGET_DEVICES_MMC(func)\
+	BOOT_TARGET_DEVICES_DHCP(func)
+#else
+#define BOOT_TARGET_DEVICES(func) \
+	BOOT_TARGET_DEVICES_MMC(func)\
+	BOOT_TARGET_DEVICES_DHCP(func)
+#endif
 
 #define BOOTENV_DESIGN_OVERLAYS \
 	"design_overlays=" \
