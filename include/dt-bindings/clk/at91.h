@@ -48,9 +48,10 @@
 
 #define ID_DDR			19
 #define ID_LCD			20
-#define ID_USBH			21
-#define ID_USBD			22
-#define ID_ISCCK		23
+#define ID_USBCK		21
+#define ID_USBH			22
+#define ID_USBD			23
+#define ID_ISCCK		24
 
 #endif
 
