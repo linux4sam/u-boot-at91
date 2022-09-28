@@ -54,6 +54,9 @@ static int clk_utmi_enable(struct clk *clk)
 	unsigned int utmi_ref_clk_freq;
 	ulong parent_rate = clk_get_parent_rate(clk);
 
+	if (clk_utmi_ready(utmi->base))
+		return 0;
+
 	/*
 	 * If mainck rate is different from 12 MHz, we have to configure the
 	 * FREQ field of the SFR_UTMICKTRIM register to generate properly
