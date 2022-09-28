@@ -214,6 +214,11 @@ static const struct {
 /* Clock setup description. */
 static const struct pmc_clk_setup sama5d2_clk_setup[] = {
 	/* Add here root clocks that need inital setup (e.g. PLLs). */
+	{
+		.pid = AT91_TO_CLK_ID(PMC_TYPE_CORE, ID_UTMI),
+		.cid = AT91_TO_CLK_ID(PMC_TYPE_CORE, ID_USBCK),
+		.rate = 48000000,
+	},
 };
 
 #define prepare_mux_table(_allocs, _index, _dst, _src, _num, _label)	\
