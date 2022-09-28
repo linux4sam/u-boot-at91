@@ -19,7 +19,7 @@
 		slow_rc_osc: slow_rc_osc {
 			compatible = "fixed-clock";
 			#clock-cells = <0>;
-			clock-frequency = <64000>;
+			clock-frequency = <32000>;
 			u-boot,dm-pre-reloc;
 		};
 
