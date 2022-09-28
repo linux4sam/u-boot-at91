@@ -27,7 +27,7 @@ static const char *clk_names[] = {
 	[ID_MCK_PRES]		= "mck_pres",
 	[ID_H32MX]		= "h32mxck",
 	[ID_UTMI]		= "utmick",
-	[ID_USBH]		= "usbck"
+	[ID_USBCK]		= "usbck"
 };
 
 /* Fractional PLL output range. */
@@ -384,13 +384,13 @@ static int sama5d2_clk_probe(struct udevice *dev)
 	cm[1] = AT91_TO_CLK_ID(PMC_TYPE_CORE, ID_UTMI);
 	prepare_mux_table(clkmuxallocs, clkmuxallocindex, tmpclkmux, cm, 2,
 			  fail);
-	c = at91sam9x5_clk_register_usb(base, clk_names[ID_USBH], p, 2,
+	c = at91sam9x5_clk_register_usb(base, clk_names[ID_USBCK], p, 2,
 					tmpclkmux);
 	if (IS_ERR(c)) {
 		ret = PTR_ERR(c);
 		goto fail;
 	}
-	clk_dm(AT91_TO_CLK_ID(PMC_TYPE_CORE, ID_USBH), c);
+	clk_dm(AT91_TO_CLK_ID(PMC_TYPE_CORE, ID_USBCK), c);
 
 	/* Register programmable clocks. */
 	p[0] = clk_names[ID_SLCK];
