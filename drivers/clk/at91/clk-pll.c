@@ -251,7 +251,7 @@ static ulong clk_pll_get_rate(struct clk *clk)
 	mul = (val >> pll->layout->mul_shift) & pll->layout->mul_mask;
 	div = (val >> pll->layout->div_shift) & pll->layout->div_mask;
 
-	return DIV_ROUND_CLOSEST_ULL(parent_rate * (mul + 1), div);
+	return parent_rate / div * (mul + 1);
 }
 
 static const struct clk_ops pll_ops = {
