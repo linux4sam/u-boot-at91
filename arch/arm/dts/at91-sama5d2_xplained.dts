@@ -22,7 +22,7 @@
 		};
 
 		main_xtal: main_xtal {
-			clock-frequency = <24000000>;
+			clock-frequency = <12000000>;
 		};
 	};
 
