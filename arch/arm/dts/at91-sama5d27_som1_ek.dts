@@ -45,6 +45,9 @@
 /dts-v1/;
 #include <dt-bindings/gpio/gpio.h>
 #include "sama5d27_som1.dtsi"
+#ifdef CONFIG_CLK_SCMI
+#include "sama5d2-optee.dtsi"
+#endif
 
 / {
 	model = "Atmel SAMA5D27 SOM1 EK";
