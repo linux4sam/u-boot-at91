@@ -1,6 +1,9 @@
 #include <dt-bindings/clk/at91.h>
 
 / {
+	memory {
+		reg = <0x22000000 0x6000000>;
+	};
 
 	reserved-memory {
 		ranges;
