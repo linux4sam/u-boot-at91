@@ -88,6 +88,7 @@ struct at91_usbh_data {
 };
 
 struct ohci_at91_priv {
+	ohci_t ohci;
 	struct clk *iclk;
 	struct clk *fclk;
 	struct clk *hclk;
