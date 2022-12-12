@@ -72,6 +72,10 @@ int usb_cpu_init_fail(void)
 #include <usb.h>
 #include "ohci.h"
 
+#if CONFIG_IS_ENABLED(PHY_MICROCHIP_SAMA7_USB)
+#include <generic-phy.h>
+#endif
+
 #define AT91_MAX_USBH_PORTS        3
 
 #define at91_for_each_port(index)	\
@@ -88,12 +92,23 @@ struct ohci_at91_priv {
 	struct clk *fclk;
 	struct clk *hclk;
 	bool clocked;
+
+#if CONFIG_IS_ENABLED(PHY_MICROCHIP_SAMA7_USB)
+	struct phy phy[AT91_MAX_USBH_PORTS];
+#endif
 };
 
 static void at91_start_clock(struct ohci_at91_priv *ohci_at91)
 {
 	if (ohci_at91->clocked)
 		return;
+
+#if CONFIG_IS_ENABLED(PHY_MICROCHIP_SAMA7_USB)
+	int i;
+
+	at91_for_each_port(i)
+		generic_phy_power_on(&ohci_at91->phy[i]);
+#endif
 
 	clk_set_rate(ohci_at91->fclk, 48000000);
 	clk_prepare_enable(ohci_at91->hclk);
@@ -106,6 +121,13 @@ static void at91_stop_clock(struct ohci_at91_priv *ohci_at91)
 {
 	if (!ohci_at91->clocked)
 		return;
+
+#if CONFIG_IS_ENABLED(PHY_MICROCHIP_SAMA7_USB)
+	int i;
+
+	at91_for_each_port(i)
+		generic_phy_power_off(&ohci_at91->phy[i]);
+#endif
 
 	clk_disable_unprepare(ohci_at91->fclk);
 	clk_disable_unprepare(ohci_at91->iclk);
@@ -212,6 +234,14 @@ static int ohci_atmel_probe(struct udevice *dev)
 		goto fail;
 	}
 
+#if CONFIG_IS_ENABLED(PHY_MICROCHIP_SAMA7_USB)
+	at91_for_each_port(i) {
+		generic_phy_get_by_index(dev, i, &ohci_at91->phy[i]);
+		generic_phy_init(&ohci_at91->phy[i]);
+		generic_phy_configure(&ohci_at91->phy[i], NULL);
+	}
+#endif
+
 	at91_start_hc(dev);
 
 	return ohci_register(dev, regs);
@@ -226,6 +256,7 @@ fail:
 
 static const struct udevice_id ohci_usb_ids[] = {
 	{ .compatible = "atmel,at91rm9200-ohci", },
+	{ .compatible = "microchip,sama7g5-ohci", },
 	{ }
 };
 
