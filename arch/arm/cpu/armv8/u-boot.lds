@@ -149,6 +149,8 @@ SECTIONS
 		. = ALIGN(8);
 	}
 
+	. = ALIGN(8);
+
 	_end = .;
 
 	/*
