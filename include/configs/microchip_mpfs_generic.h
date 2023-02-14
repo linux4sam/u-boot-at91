@@ -17,16 +17,31 @@
 	func(MMC, mmc, 0) \
 	func(DHCP, dhcp, na)
 
+#define BOOTENV_DESIGN_OVERLAYS \
+	"design_overlays=" \
+	"if test -n ${no_of_overlays}; then " \
+		"setenv inc 1; " \
+		"setenv idx 0; " \
+		"fdt resize ${dtbo_size}; " \
+		"while test $idx -ne ${no_of_overlays}; do " \
+			"setenv dtbo_name dtbo_image${idx}; " \
+			"setenv fdt_cmd \"fdt apply $\"$dtbo_name; " \
+			"run fdt_cmd; " \
+			"setexpr idx $inc + $idx; " \
+		"done; " \
+	"fi;\0 " \
+
 #include <config_distro_bootcmd.h>
 
 #define CFG_EXTRA_ENV_SETTINGS \
 	"bootm_size=0x10000000\0" \
 	"kernel_addr_r=0x84000000\0" \
 	"fdt_addr_r=0x88000000\0" \
-	"scriptaddr=0x88100000\0" \
+	"scriptaddr=0x8e000000\0" \
 	"pxefile_addr_r=0x88200000\0" \
 	"ramdisk_addr_r=0x88300000\0" \
 	"fdtfile=" CONFIG_DEFAULT_FDT_FILE "\0" \
-	BOOTENV
+	BOOTENV_DESIGN_OVERLAYS \
+	BOOTENV \
 
 #endif /* __CONFIG_H */
