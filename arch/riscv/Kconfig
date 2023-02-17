@@ -32,6 +32,9 @@ config TARGET_LICHEERV_NANO
 config TARGET_MICROCHIP_GENERIC
 	bool "Support Microchip PolarFire-SoC Boards"
 
+config TARGET_ALDEC_TYSOM_M_MPFS250T
+	bool "Support Aldec TySoM M MPFS250T Board"
+
 config TARGET_MILKV_DUO
 	bool "Support Milk-v Duo Board"
 
@@ -109,6 +112,7 @@ config SPL_ZERO_MEM_BEFORE_USE
 	  Sifive core devices that uses L2 cache to store SPL.
 
 # board-specific options below
+source "board/aldec/tysom-m-mpfs250t/Kconfig"
 source "board/andestech/ae350/Kconfig"
 source "board/andestech/voyager/Kconfig"
 source "board/aries/m100pfsevp/Kconfig"

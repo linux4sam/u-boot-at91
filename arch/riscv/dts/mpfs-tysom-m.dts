@@ -1,0 +1,94 @@
+// SPDX-License-Identifier: GPL-2.0
+/*
+ * Original all-in-one devicetree:
+ * Copyright (C) 2020-2022 - Aldec
+ * Rewritten to use includes:
+ * Copyright (C) 2022-2023 - Conor Dooley <conor.dooley@microchip.com>
+ */
+
+/dts-v1/;
+
+#include "../../../dts/upstream/src/riscv/microchip/mpfs.dtsi"
+
+/* Clock frequency (in Hz) of the rtcclk */
+#define MTIMER_FREQ	1000000
+
+/ {
+	#address-cells = <2>;
+	#size-cells = <2>;
+	model = "Aldec TySOM-M-MPFS250T-REV2";
+	compatible = "aldec,tysom-m-mpfs250t-rev2", "microchip,mpfs";
+
+	aliases {
+		serial1 = &mmuart1;
+		ethernet0 = &mac1;
+	};
+
+	chosen {
+		stdout-path = "serial1:115200n8";
+	};
+
+	cpus {
+		timebase-frequency = <MTIMER_FREQ>;
+	};
+
+	ddrc_cache_lo: memory@80000000 {
+		device_type = "memory";
+		reg = <0x0 0x80000000 0x0 0x30000000>;
+		status = "okay";
+	};
+
+	ddrc_cache_hi: memory@1000000000 {
+		device_type = "memory";
+		reg = <0x10 0x0 0x0 0x40000000>;
+		status = "okay";
+	};
+};
+
+&refclk {
+	clock-frequency = <125000000>;
+};
+
+&mmuart1 {
+	status = "okay";
+};
+
+&mmc {
+	status = "okay";
+	pinctrl-names = "default";
+	bus-width = <4>;
+	cap-mmc-highspeed;
+	mmc-ddr-3_3v;
+	max-frequency = <200000000>;
+	non-removable;
+	no-sd;
+	no-sdio;
+	voltage-ranges = <3300 3300>;
+};
+
+&mac0 {
+	phy-mode = "sgmii";
+	phy-handle = <&phy0>;
+};
+
+&mac1 {
+	status = "okay";
+	phy-mode = "sgmii";
+	phy-handle = <&phy1>;
+
+	phy0: ethernet-phy@0 {
+		reg = <0>;
+	};
+
+	phy1: ethernet-phy@1 {
+		reg = <1>;
+	};
+};
+
+&mbox {
+	status = "okay";
+};
+
+&syscontroller {
+	status = "okay";
+};
