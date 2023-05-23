@@ -42,5 +42,5 @@ config BOARD_SPECIFIC_OPTIONS # dummy
 	imply MPFS_MBOX
 	imply MISC
 	imply MPFS_SYSCONTROLLER
-
+	imply MPFS_PRIORITISE_QSPI_BOOT
 endif

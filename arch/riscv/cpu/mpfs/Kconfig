@@ -29,3 +29,11 @@ config MICROCHIP_MPFS
 	imply SPI
 	imply DM_SPI
 	imply MICROCHIP_COREQSPI
+
+config MPFS_PRIORITISE_QSPI_BOOT
+	bool "prioritise booting from QSPI"
+	default MICROCHIP_COREQSPI
+	depends on MICROCHIP_MPFS
+	depends on MICROCHIP_COREQSPI
+	help
+	  "Disable to remove boot from qspi prioritisation"
