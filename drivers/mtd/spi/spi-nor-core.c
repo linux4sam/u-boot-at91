@@ -4338,6 +4338,76 @@ static struct spi_nor_fixups winbond_nor_multi_die_fixups = {
 };
 #endif /* CONFIG_SPI_FLASH_WINBOND */
 
+#ifdef CONFIG_SPI_FLASH_MX66LM1G45G
+static int spi_nor_mx66lm1g45g_octal_dtr_enable(struct spi_nor *nor)
+{
+	struct spi_mem_op op;
+	u8 buf;
+	int ret;
+
+	/* Use 20 dummy cycles for memory array reads. */
+	buf = SPINOR_REG_CR2_DUMMY_20;
+	op = (struct spi_mem_op)
+		SPI_MEM_OP(SPI_MEM_OP_CMD(SPINOR_OP_WRITE_CR2, 1),
+			   SPI_MEM_OP_ADDR(4, SPINOR_REG_CR2_DUMMY_ADDR,
+					   1),
+			   SPI_MEM_OP_NO_DUMMY,
+			   SPI_MEM_OP_DATA_OUT(1, &buf, 1));
+
+	ret = write_enable(nor);
+	if (ret)
+		return ret;
+
+	ret = spi_mem_exec_op(nor->spi, &op);
+	if (ret)
+		return ret;
+
+	ret = spi_nor_wait_till_ready(nor);
+	if (ret)
+		return ret;
+
+	buf = SPINOR_REG_CR2_DTR_OPI_ENABLE;
+	op = (struct spi_mem_op)
+		SPI_MEM_OP(SPI_MEM_OP_CMD(SPINOR_OP_WRITE_CR2, 1),
+			   SPI_MEM_OP_ADDR(4, SPINOR_REG_CR2_MODE_ADDR, 1),
+			   SPI_MEM_OP_NO_DUMMY,
+			   SPI_MEM_OP_DATA_OUT(1, &buf, 1));
+
+	ret = write_enable(nor);
+	if (ret)
+		return ret;
+
+	return spi_mem_exec_op(nor->spi, &op);
+}
+
+static void mx66lm1g45g_late_init(struct spi_nor *nor,
+				  struct spi_nor_flash_parameter *params)
+{
+	nor->octal_dtr_enable = spi_nor_mx66lm1g45g_octal_dtr_enable;
+}
+
+static void mx66lm1g45g_post_sfdp(struct spi_nor *nor,
+				  struct spi_nor_flash_parameter *params)
+{
+	/* Set the Fast Read settings. */
+	params->hwcaps.mask |= SNOR_HWCAPS_READ_8_8_8_DTR;
+	spi_nor_set_read_settings(&params->reads[SNOR_CMD_READ_8_8_8_DTR],
+				  0, 20, SPINOR_OP_MX_DTR_RD,
+				  SNOR_PROTO_8_8_8_DTR);
+
+	params->hwcaps.mask |= SNOR_HWCAPS_PP_8_8_8_DTR;
+
+	nor->cmd_ext_type = SPI_NOR_EXT_INVERT;
+	params->rdsr_dummy = 4;
+	params->rdsr_addr_nbytes = 4;
+}
+
+static struct spi_nor_fixups mx66lm1g45g_fixups = {
+	.late_init = mx66lm1g45g_late_init,
+	.post_sfdp = mx66lm1g45g_post_sfdp,
+};
+#endif /* CONFIG_SPI_FLASH_MX66LM1G45G */
+
 /** spi_nor_octal_dtr_enable() - enable Octal DTR I/O if needed
  * @nor:                 pointer to a 'struct spi_nor'
  *
@@ -4588,6 +4658,11 @@ void spi_nor_set_fixups(struct spi_nor *nor)
 		}
 	}
 #endif /* SPI_FLASH_WINBOND */
+
+#ifdef CONFIG_SPI_FLASH_MX66LM1G45G
+	if (!strcmp(nor->info->name, "mx66lm1g45g"))
+		nor->fixups = &mx66lm1g45g_fixups;
+#endif
 }
 
 static void spi_nor_set_dtr_bswap16_ops(struct spi_nor *nor,

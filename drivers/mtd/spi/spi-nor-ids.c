@@ -352,6 +352,12 @@ const struct flash_info spi_nor_ids[] = {
 	{ INFO("mx25uw12345g",   0xc28438, 0, 64 * 1024, 256, SECT_4K | SPI_NOR_OCTAL_DTR_READ | SPI_NOR_4B_OPCODES) },
 	{ INFO("mx25uw6445g",    0xc28137, 0, 64 * 1024, 128, SECT_4K | SPI_NOR_OCTAL_DTR_READ | SPI_NOR_4B_OPCODES) },
 	{ INFO("mx25uw6345g",    0xc28437, 0, 64 * 1024, 128, SECT_4K | SPI_NOR_OCTAL_DTR_READ | SPI_NOR_4B_OPCODES) },
+#ifdef CONFIG_SPI_FLASH_MX66LM1G45G
+	{ INFO("mx66lm1g45g", 0xc2853b, 0, 64 * 1024, 2048,
+	       SPI_NOR_SKIP_SFDP | SPI_NOR_SOFT_RESET |
+	       SECT_4K | SPI_NOR_OCTAL_DTR_READ | SPI_NOR_4B_OPCODES)
+	},
+#endif
 #endif
 #ifdef CONFIG_SPI_FLASH_PUYA
 	/* Puya Semiconductor (Shanghai) Co., Ltd */
