@@ -139,14 +139,6 @@ at91sam9x5_clk_register_usb(void __iomem *base, const char *name,
 					    clk_mux_table);
 }
 
-struct clk *
-sam9x60_clk_register_usb(void __iomem *base, const char *name,
-			 const char **parent_names, u8 num_parents)
-{
-	return _at91sam9x5_clk_register_usb(base, name, parent_names,
-					    num_parents, SAM9X60_USBS_MASK,
-					    NULL);
-}
 
 U_BOOT_DRIVER(at91_sam9x5_usb_clk) = {
 	.name = UBOOT_DM_CLK_AT91_SAM9X5_USB,
