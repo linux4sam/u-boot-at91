@@ -118,6 +118,9 @@
 			reg = <0xa0000000 0x300>;
 			clocks = <&pmc PMC_TYPE_PERIPHERAL 31>, <&pmc PMC_TYPE_GCK 31>, <&pmc PMC_TYPE_CORE ID_MAINCK>;
 			clock-names = "hclock", "multclk", "baseclk";
+			assigned-clock-parents = <&pmc PMC_TYPE_CORE ID_UTMI>;
+			assigned-clocks = <&pmc PMC_TYPE_GCK 31>;
+			assigned-clock-rates = <480000000>;
 			status = "disabled";
 		};
 
@@ -126,6 +129,9 @@
 			reg = <0xb0000000 0x300>;
 			clocks = <&pmc PMC_TYPE_PERIPHERAL 32>, <&pmc PMC_TYPE_GCK 32>, <&pmc PMC_TYPE_CORE ID_MAINCK>;
 			clock-names = "hclock", "multclk", "baseclk";
+			assigned-clock-parents = <&pmc PMC_TYPE_CORE ID_UTMI>;
+			assigned-clocks = <&pmc PMC_TYPE_GCK 32>;
+			assigned-clock-rates = <480000000>;
 			status = "disabled";
 		};
 
