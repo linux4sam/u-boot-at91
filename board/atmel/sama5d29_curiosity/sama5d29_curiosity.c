@@ -74,6 +74,12 @@ int board_init(void)
 	return 0;
 }
 
+int misc_init_r(void)
+{
+	at91_spi_nor_set_ethaddr();
+	return 0;
+}
+
 int dram_init_banksize(void)
 {
 	return fdtdec_setup_memory_banksize();
