@@ -20,27 +20,27 @@
 			compatible = "fixed-clock";
 			#clock-cells = <0>;
 			clock-frequency = <32000>;
-			u-boot,dm-pre-reloc;
+			bootph-all;
 		};
 
 		main_rc: main_rc {
 			compatible = "fixed-clock";
 			#clock-cells = <0>;
 			clock-frequency = <12000000>;
-			u-boot,dm-pre-reloc;
+			bootph-all;
 		};
 
 		slow_xtal: slow_xtal {
 			compatible = "fixed-clock";
 			#clock-cells = <0>;
 			clock-frequency = <32768>;
-			u-boot,dm-pre-reloc;
+			bootph-all;
 		};
 
 		main_xtal: main_xtal {
 			compatible = "fixed-clock";
 			#clock-cells = <0>;
-			u-boot,dm-pre-reloc;
+			bootph-all;
 		};
 	};
 
@@ -155,7 +155,7 @@
 				clock-names = "slow_clk", "main_xtal", "main_rc";
 				regmap-sfr = <&sfr>;
 				status = "okay";
-				u-boot,dm-pre-reloc;
+				bootph-all;
 			};
 
 			clk32k: sckc@fffffe50 {
@@ -282,7 +282,7 @@
 			sfr: sfr@f8030000 {
 				compatible = "atmel,sama5d2-sfr", "syscon";
 				reg = <0xf8030000 0x98>;
-				u-boot,dm-pre-reloc;
+				bootph-all;
 			};
 
 			reset_controller: reset-controller@f8048000 {
