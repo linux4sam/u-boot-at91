@@ -44,6 +44,7 @@ obj-$(CONFIG_$(PHASE_)PHY_IMX8MQ_USB) += phy-imx8mq-usb.o
 obj-$(CONFIG_PHY_IMX8M_PCIE) += phy-imx8m-pcie.o
 obj-$(CONFIG_PHY_XILINX_ZYNQMP) += phy-zynqmp.o
 obj-$(CONFIG_PHY_COMMON_PROPS) += phy-common-props.o
+obj-$(CONFIG_PHY_MICROCHIP_SAMA7_USB)  += phy-sama7-utmi-clk.o phy-sama7-usb.o
 obj-y += cadence/
 obj-y += ti/
 obj-y += qcom/
