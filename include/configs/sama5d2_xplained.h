@@ -11,6 +11,7 @@
 
 #include "at91-sama5_common.h"
 
+#define CFG_SYS_PL310_BASE          0xa00000
 /* SPL */
 
 #endif
