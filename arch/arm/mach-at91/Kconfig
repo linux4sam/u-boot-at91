@@ -154,6 +154,12 @@ config TARGET_SAM9X60_CURIOSITY
         select SAM9X60
         select BOARD_LATE_INIT
 
+config TARGET_SAM9X75EB
+	bool "SAM9X75-EB board"
+	select SAM9X7
+	select BOARD_EARLY_INIT_F
+	select BOARD_LATE_INIT
+
 config TARGET_SAM9X75_CURIOSITY
 	bool "SAM9X75 CURIOSITY board"
 	select SAM9X7
@@ -353,6 +359,7 @@ source "board/atmel/at91sam9rlek/Kconfig"
 source "board/atmel/at91sam9x5ek/Kconfig"
 source "board/atmel/sam9x60ek/Kconfig"
 source "board/atmel/sam9x60_curiosity/Kconfig"
+source "board/atmel/sam9x75eb/Kconfig"
 source "board/atmel/sam9x75_curiosity/Kconfig"
 source "board/atmel/sama7g5ek/Kconfig"
 source "board/atmel/sama7g54_curiosity/Kconfig"
