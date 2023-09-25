@@ -5,3 +5,4 @@ M:	Balamanikandan Gunasundar <balamanikandan.gunasundar@microchip.com>
 S:	Maintained
 F:	board/atmel/sam9x75eb/
 F:	include/configs/sam9x75eb.h
+F:	configs/sam9x75eb_mmc_defconfig
