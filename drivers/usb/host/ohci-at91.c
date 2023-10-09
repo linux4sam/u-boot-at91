@@ -245,11 +245,17 @@ static int ohci_atmel_probe(struct udevice *dev)
 
 	at91_start_hc(dev);
 
-	return ohci_register(dev, regs);
+	ret = ohci_register(dev, regs);
+	if (ret) {
+		at91_stop_hc(dev);
+		goto fail;
+	}
+
+	return ret;
 
 fail:
 	at91_for_each_port(i)
-		if (&pdata->vbus_pin[i])
+		if (pdata->vbus_pin[i].dev)
 			gpio_free(pdata->vbus_pin[i].offset);
 
 	return ret;
