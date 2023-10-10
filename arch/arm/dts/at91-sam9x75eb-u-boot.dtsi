@@ -117,6 +117,10 @@
 	bootph-all;
 };
 
+&pmecc {
+	clocks = <&pmc PMC_TYPE_PERIPHERAL 48>;
+};
+
 &sdmmc0 {
 	bootph-all;
 };
