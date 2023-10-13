@@ -6,6 +6,7 @@
 
 #include <config.h>
 #include <debug_uart.h>
+#include <fdtdec.h>
 #include <init.h>
 #include <asm/global_data.h>
 #include <asm/io.h>
@@ -62,16 +63,14 @@ int misc_init_r(void)
 int board_init(void)
 {
 	/* address of boot parameters */
-	gd->bd->bi_boot_params = CFG_SYS_SDRAM_BASE + 0x100;
+	gd->bd->bi_boot_params = gd->bd->bi_dram[0].start + 0x100;
 
 	board_leds_init();
 
 	return 0;
 }
 
-int dram_init(void)
+int dram_init_banksize(void)
 {
-	gd->ram_size = get_ram_size((void *)CFG_SYS_SDRAM_BASE,
-				    CFG_SYS_SDRAM_SIZE);
-	return 0;
+	return fdtdec_setup_memory_banksize();
 }
