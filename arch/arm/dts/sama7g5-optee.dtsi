@@ -1,0 +1,91 @@
+#include <dt-bindings/clk/at91.h>
+
+/ {
+	memory {
+		reg = <0x62000000 0x6000000>;
+	};
+
+	reserved-memory {
+		ranges;
+		#address-cells = <0x01>;
+		#size-cells = <0x01>;
+
+		scmi0_shmem: scmi0_shmem@61400000 {
+			no-map;
+			reg = <0x61400000 0x80>;
+		};
+	};
+
+	firmware {
+		scmi0 {
+			compatible = "arm,scmi-smc";
+			shmem = <&scmi0_shmem>;
+			arm,smc-id = <0x2000200>;
+			#address-cells = <0x01>;
+			#size-cells = <0x00>;
+			bootph-all;
+
+			scmi0_clock: scmi0_clock@14 {
+				#clock-cells = <0x01>;
+				reg = <0x14>;
+				bootph-all;
+			};
+		};
+	};
+
+	psci {
+		sys_reset = <0x84000009>;
+		sys_poweroff = <0x84000008>;
+		cpu_on = <0x84000003>;
+		cpu_off = <0x84000002>;
+		cpu_suspend = <0x84000001>;
+		method = "smc";
+		compatible = "arm,psci-1.0", "arm,psci-0.2", "arm,psci";
+	};
+};
+
+&tcb0 {
+	clocks = <&scmi0_clock AT91_SCMI_CLK_PERIPH_TCB0_CLK>, <&scmi0_clock AT91_SCMI_CLK_PERIPH_TCB0_CLK>, <&scmi0_clock AT91_SCMI_CLK_PERIPH_TCB0_CLK>, <&clk32k 1>;
+};
+
+&cpu0 {
+	clocks = <&scmi0_clock AT91_SCMI_CLK_CORE_MCK_PRES>, <&scmi0_clock AT91_SCMI_CLK_CORE_MCK>, <&main_xtal>;
+};
+
+&sdmmc0 {
+	clocks = <&scmi0_clock AT91_SCMI_CLK_PERIPH_SDMMC0_HCLK>, <&scmi0_clock AT91_SCMI_CLK_GCK_SDMMC0_GCLK>, <&scmi0_clock AT91_SCMI_CLK_CORE_MAIN>;
+	/delete-property/assigned-clocks;
+	/delete-property/assigned-clock-parents;
+	/delete-property/assigned-clock-rates;
+};
+
+&sdmmc1 {
+	clocks = <&scmi0_clock AT91_SCMI_CLK_PERIPH_SDMMC1_HCLK>, <&scmi0_clock AT91_SCMI_CLK_GCK_SDMMC1_GCLK>, <&scmi0_clock AT91_SCMI_CLK_CORE_MAIN>;
+	/delete-property/assigned-clocks;
+	/delete-property/assigned-clock-parents;
+	/delete-property/assigned-clock-rates;
+};
+
+&pmc {
+	status = "disabled";
+};
+
+&clk32k {
+	status = "disabled";
+};
+
+&pit64b0 {
+	status = "disabled";
+};
+
+&pit64b1 {
+	status = "disabled";
+};
+
+&uart3 {
+	clocks = <&scmi0_clock AT91_SCMI_CLK_PERIPH_FLX3_CLK>;
+};
+
+&pioA {
+	clocks = <&scmi0_clock AT91_SCMI_CLK_PERIPH_PIOA_CLK>;
+};
