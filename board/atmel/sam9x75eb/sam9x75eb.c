@@ -82,8 +82,3 @@ int dram_init_banksize(void)
 {
 	return fdtdec_setup_memory_banksize();
 }
-
-int dram_init(void)
-{
-	return fdtdec_setup_mem_size_base();
-}
