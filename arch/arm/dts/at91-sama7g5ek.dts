@@ -11,6 +11,9 @@
 /dts-v1/;
 #include "sama7g5-pinfunc.h"
 #include "sama7g5.dtsi"
+#ifdef CONFIG_CLK_SCMI
+#include "sama7g5-optee.dtsi"
+#endif
 #include <dt-bindings/mfd/atmel-flexcom.h>
 #include <dt-bindings/input/input.h>
 #include <dt-bindings/pinctrl/at91.h>
