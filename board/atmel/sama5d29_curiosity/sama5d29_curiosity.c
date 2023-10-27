@@ -33,15 +33,19 @@ static void board_usb_hw_init(void)
 	atmel_pio4_set_pio_output(AT91_PIO_PORTA, 6, 1);
 }
 
+#if (IS_ENABLED(CONFIG_BOARD_LATE_INIT))
 int board_late_init(void)
 {
+#if (IS_ENABLED(CONFIG_VIDEO))
 	at91_video_show_board_info();
-
+#endif
 	at91_pda_detect();
 
 	return 0;
 }
+#endif
 
+#if (IS_ENABLED(CONFIG_DEBUG_UART_BOARD_INIT))
 static void board_uart0_hw_init(void)
 {
 	atmel_pio4_set_c_periph(AT91_PIO_PORTB, 26, ATMEL_PIO_PUEN_MASK);	/* URXD0 */
@@ -54,13 +58,14 @@ void board_debug_uart_init(void)
 {
 	board_uart0_hw_init();
 }
+#endif
 
+#if (IS_ENABLED(CONFIG_BOARD_EARLY_INIT_F))
 int board_early_init_f(void)
 {
-	debug_uart_init();
-
 	return 0;
 }
+#endif
 
 int board_init(void)
 {
@@ -74,11 +79,15 @@ int board_init(void)
 	return 0;
 }
 
+#if (IS_ENABLED(CONFIG_MISC_INIT_R))
 int misc_init_r(void)
 {
+#if (IS_ENABLED(CONFIG_SPI_FLASH_SFDP_SUPPORT))
 	at91_spi_nor_set_ethaddr();
+#endif
 	return 0;
 }
+#endif
 
 int dram_init_banksize(void)
 {
