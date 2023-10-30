@@ -40,6 +40,7 @@
  * providing some of the logic we are implementing here. It would be smart
  * to expose the needed lib/bch.c helpers/functions and re-use them here.
  */
+#include <clk.h>
 #include <linux/iopoll.h>
 #include <linux/mtd/rawnand.h>
 #include <dm/of_access.h>
@@ -824,10 +825,21 @@ atmel_pmecc_create(struct udevice *dev,
 {
 	struct atmel_pmecc *pmecc;
 	struct resource res;
+	int ret;
 
 	pmecc = devm_kzalloc(dev, sizeof(*pmecc), GFP_KERNEL);
 	if (!pmecc)
 		return ERR_PTR(-ENOMEM);
+
+	if (caps->clk_ctrl) {
+		ret = clk_get_by_index(dev, 0, &pmecc->clk);
+		if (ret)
+			return ERR_PTR(ret);
+
+		ret = clk_enable(&pmecc->clk);
+		if (ret)
+			return ERR_PTR(ret);
+	}
 
 	pmecc->caps = caps;
 	pmecc->dev = dev;
@@ -889,6 +901,13 @@ static struct atmel_pmecc_caps at91sam9g45_caps = {
 	.clk_ctrl = true,
 };
 
+static struct atmel_pmecc_caps sam9x7_caps = {
+	.strengths = atmel_pmecc_strengths,
+	.nstrengths = 5,
+	.el_offset = 0x8c,
+	.clk_ctrl = true,
+};
+
 static struct atmel_pmecc_caps sama5d4_caps = {
 	.strengths = atmel_pmecc_strengths,
 	.nstrengths = 5,
@@ -935,6 +954,7 @@ static const struct udevice_id atmel_pmecc_match[] = {
 	{ .compatible = "atmel,at91sam9g45-pmecc", (ulong)&at91sam9g45_caps },
 	{ .compatible = "atmel,sama5d4-pmecc", (ulong)&sama5d4_caps },
 	{ .compatible = "atmel,sama5d2-pmecc", (ulong)&sama5d2_caps },
+	{ .compatible = "microchip,sam9x7-pmecc", (ulong)&sam9x7_caps },
 	{ /* sentinel */ }
 };
 
@@ -958,9 +978,21 @@ static int atmel_pmecc_probe(struct udevice *dev)
 	return 0;
 }
 
+static int atmel_pmecc_remove(struct udevice *dev)
+{
+	struct atmel_pmecc *pmecc = dev_get_priv(dev);
+
+	if (pmecc->caps->clk_ctrl) {
+		clk_disable(&pmecc->clk);
+	}
+
+	return 0;
+}
+
 U_BOOT_DRIVER(atmel_pmecc) = {
 	.name = "atmel-pmecc",
 	.id = UCLASS_MTD,
 	.of_match = atmel_pmecc_match,
 	.probe = atmel_pmecc_probe,
+	.remove = atmel_pmecc_remove,
 };
