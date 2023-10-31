@@ -62,10 +62,16 @@
 
 &sdmmc0 {
 	clocks = <&scmi0_clock AT91_SCMI_CLK_PERIPH_SDMMC0_HCLK>, <&scmi0_clock AT91_SCMI_CLK_GCK_SDMMC0_GCLK>, <&scmi0_clock AT91_SCMI_CLK_CORE_MAIN>;
+	/delete-property/assigned-clocks;
+	/delete-property/assigned-clock-parents;
+	/delete-property/assigned-clock-rates;
 };
 
 &sdmmc1 {
 	clocks = <&scmi0_clock AT91_SCMI_CLK_PERIPH_SDMMC1_HCLK>, <&scmi0_clock AT91_SCMI_CLK_GCK_SDMMC1_GCLK>, <&scmi0_clock AT91_SCMI_CLK_CORE_MAIN>;
+	/delete-property/assigned-clocks;
+	/delete-property/assigned-clock-parents;
+	/delete-property/assigned-clock-rates;
 };
 
 &hlcdc {
