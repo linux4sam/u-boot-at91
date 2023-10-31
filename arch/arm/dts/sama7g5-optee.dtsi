@@ -74,6 +74,17 @@
 	status = "disabled";
 };
 
+&i2c8 {
+	clocks = <&scmi0_clock AT91_SCMI_CLK_PERIPH_FLX8_CLK>;
+};
+
+&gmac0 {
+	clocks = <&scmi0_clock AT91_SCMI_CLK_PERIPH_MACB0_CLK>, <&scmi0_clock AT91_SCMI_CLK_PERIPH_MACB0_CLK>, <&scmi0_clock AT91_SCMI_CLK_GCK_MACB0_GCLK>, <&scmi0_clock AT91_SCMI_CLK_GCK_MACB0_TSU>;
+	/delete-property/assigned-clocks;
+	/delete-property/assigned-clock-parents;
+	/delete-property/assigned-clock-rates;
+};
+
 &pit64b0 {
 	status = "disabled";
 };
