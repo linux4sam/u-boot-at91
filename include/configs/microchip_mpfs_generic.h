@@ -31,6 +31,7 @@
 		"done; " \
 	"fi;\0 " \
 
+#if !defined(CONFIG_FIT_SIGNATURE)
 #include <config_distro_bootcmd.h>
 
 #define CFG_EXTRA_ENV_SETTINGS \
@@ -43,4 +44,5 @@
 	BOOTENV_DESIGN_OVERLAYS \
 	BOOTENV \
 
+#endif
 #endif /* __CONFIG_H */
