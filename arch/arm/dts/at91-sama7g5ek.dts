@@ -86,9 +86,13 @@
 	};
 
 	/* 512 M */
-	memory@60000000 {
+	memory {
 		device_type = "memory";
+#ifdef CONFIG_CLK_SCMI
+		reg = <0x62000000 0x1E000000>;
+#else
 		reg = <0x60000000 0x20000000>;
+#endif
 	};
 
 	sound: sound {
