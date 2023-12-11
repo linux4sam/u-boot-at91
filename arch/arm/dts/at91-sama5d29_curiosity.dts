@@ -51,7 +51,9 @@
 	ahb {
 		usb1: ohci@400000 {
 			num-ports = <3>;
-			atmel,vbus-gpio = <&pioA PIN_PB13 GPIO_ACTIVE_HIGH>;
+			atmel,vbus-gpio = <0
+					   &pioA PIN_PA6 GPIO_ACTIVE_HIGH
+					   0>;
 			pinctrl-names = "default";
 			pinctrl-0 = <&pinctrl_usb_default>;
 			status = "okay";
