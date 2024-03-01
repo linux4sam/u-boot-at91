@@ -26,7 +26,7 @@
 #include <asm/types.h>
 #include <linux/bitops.h>
 
-#if defined(CONFIG_SAMA7G5)
+#if defined(CONFIG_SAMA7G5) || defined(CONFIG_SAMA7D65)
 typedef struct at91_pmc {
 	u32	scer;		/* 0x00 System Clock Enable Register */
 	u32	scdr;		/* 0x04 System Clock Disable Register */
@@ -210,7 +210,7 @@ typedef struct at91_pmc {
 #define		AT91_PMC_PCR_GCKCSS_UPLL_CLK	(0x3 << 8)
 #define		AT91_PMC_PCR_GCKCSS_MCK_CLK	(0x4 << 8)
 #define		AT91_PMC_PCR_GCKCSS_AUDIO_CLK	(0x5 << 8)
-#if defined(CONFIG_SAMA7G5)
+#if defined(CONFIG_SAMA7G5) || defined(CONFIG_SAMA7D65)
 #define AT91_PMC_PCR_CMD_WRITE		(0x1 << 31)
 #else
 #define AT91_PMC_PCR_CMD_WRITE		(0x1 << 12)
