@@ -32,6 +32,9 @@ config TARGET_LICHEERV_NANO
 config TARGET_MICROCHIP_GENERIC
 	bool "Support Microchip PolarFire-SoC Boards"
 
+config TARGET_MICROCHIP_DISCOKIT
+	bool "Support Microchip PolarFire-SoC Discovery Board"
+
 config TARGET_SUNDANCEDSP_POLARBERRY
 	bool "Support SundanceDSP Polarberry Board (based on Microchip MPFS)"
 
@@ -124,6 +127,7 @@ source "board/beagle/beaglev_fire/Kconfig"
 source "board/canaan/k230_canmv/Kconfig"
 source "board/emulation/qemu-riscv/Kconfig"
 source "board/microchip/mpfs_generic/Kconfig"
+source "board/microchip/mpfs_discokit/Kconfig"
 source "board/openpiton/riscv64/Kconfig"
 source "board/sundancedsp/polarberry/Kconfig"
 source "board/sifive/unleashed/Kconfig"

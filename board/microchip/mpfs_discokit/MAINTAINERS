@@ -1,0 +1,7 @@
+Microchip MPFS disco-kit
+M:     Padmarao Begari <padmarao.begari@microchip.com>
+M:     Cyril Jean <cyril.jean@microchip.com>
+S:     Maintained
+F:     board/microchip/mpfs_discokit/
+F:     include/configs/microchip_mpfs_discokit.h
+F:     configs/microchip_mpfs_discokit_defconfig
