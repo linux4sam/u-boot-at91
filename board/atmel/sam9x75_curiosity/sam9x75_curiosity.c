@@ -62,6 +62,16 @@ int board_init(void)
 	return 0;
 }
 
+#if (IS_ENABLED(CONFIG_MISC_INIT_R))
+int misc_init_r(void)
+{
+#if (IS_ENABLED(CONFIG_SPI_FLASH_SFDP_SUPPORT))
+	at91_spi_nor_set_ethaddr();
+#endif
+	return 0;
+}
+#endif
+
 int dram_init_banksize(void)
 {
 	return fdtdec_setup_memory_banksize();
