@@ -256,6 +256,7 @@ struct atmel_qspi_caps {
 	bool has_gclk;
 	bool has_ricr;
 	bool octal;
+	bool is_9x7;
 };
 
 struct atmel_qspi_priv_ops;
@@ -893,7 +894,15 @@ static int atmel_qspi_set_gclk(struct udevice *bus, uint hz)
 	if (ret)
 		dev_err(bus, "Failed to disable QSPI generic clock\n");
 
-	ret = clk_set_rate(&gclk, hz);
+	/*
+	 * In sam9x7, QSPI GCLK is 2x the data rate. The max gclk freq for QSPI
+	 * is 200MHz. It must be programmed at 200 MHz to reach 100 MHz
+	 * on the data.
+	 */
+	if (aq->caps->is_9x7)
+		ret = clk_set_rate(&gclk, (2 * hz));
+	else
+		ret = clk_set_rate(&gclk, hz);
 	if (ret < 0) {
 		dev_err(bus, "Failed to set generic clock rate.\n");
 		return ret;
@@ -916,15 +925,20 @@ static int atmel_qspi_sama7g5_set_speed(struct udevice *bus, uint hz)
 	if (ret)
 		return ret;
 
-	if (aq->caps->octal) {
-		ret = atmel_qspi_set_pad_calibration(bus, hz);
-		if (ret)
-			return ret;
-	} else {
-		atmel_qspi_write(QSPI_CR_DLLON, aq, QSPI_CR);
-		ret =  readl_poll_timeout(aq->regs + QSPI_SR2, val,
-					  val & QSPI_SR2_DLOCK,
-					  ATMEL_QSPI_TIMEOUT);
+	/*
+	 * sam9x7 does not support pad calibration
+	 */
+	if (!aq->caps->is_9x7) {
+		if (aq->caps->octal) {
+			ret = atmel_qspi_set_pad_calibration(bus, hz);
+			if (ret)
+				return ret;
+		} else {
+			atmel_qspi_write(QSPI_CR_DLLON, aq, QSPI_CR);
+			ret =  readl_poll_timeout(aq->regs + QSPI_SR2, val,
+						  val & QSPI_SR2_DLOCK,
+						  ATMEL_QSPI_TIMEOUT);
+		}
 	}
 
 	/* Set the QSPI controller by default in Serial Memory Mode */
@@ -1313,6 +1327,12 @@ static const struct atmel_qspi_caps atmel_sama7g5_qspi_caps = {
 	.has_gclk = true,
 };
 
+static const struct atmel_qspi_caps atmel_sam9x7_ospi_caps = {
+	.has_gclk = true,
+	.octal = true,
+	.is_9x7 = true,
+};
+
 static const struct udevice_id atmel_qspi_ids[] = {
 	{
 		.compatible = "atmel,sama5d2-qspi",
@@ -1329,6 +1349,10 @@ static const struct udevice_id atmel_qspi_ids[] = {
 	{
 		.compatible = "microchip,sama7g5-qspi",
 		.data = (ulong)&atmel_sama7g5_qspi_caps,
+	},
+	{
+		.compatible = "microchip,sam9x7-ospi",
+		.data = (ulong)&atmel_sam9x7_ospi_caps,
 	},
 	{ /* sentinel */ }
 };
