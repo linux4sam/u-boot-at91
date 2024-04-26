@@ -30,7 +30,7 @@ int board_late_init(void)
 {
 	at91_prepare_cpu_var();
 
-#ifdef CONFIG_I2C_EEPROM
+#if (IS_ENABLED(CONFIG_I2C_EEPROM))
 	at91_ext_board_display_detect(LVDS_MIPI_DISPLAY_EEPROM);
 	at91_ext_board_eth_detect(GB_ETH_SODIMM_EEPROM);
 #endif
