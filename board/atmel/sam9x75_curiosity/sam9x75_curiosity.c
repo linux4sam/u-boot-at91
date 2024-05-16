@@ -17,10 +17,8 @@
 #include <asm/mach-types.h>
 
 #define LVDS_MIPI_DISPLAY_EEPROM	"eeprom@53"
-#define GB_ETH_SODIMM_EEPROM		"eeprom@54"
 
 void at91_ext_board_display_detect(const char *eeprom);
-void at91_ext_board_eth_detect(const char *eeprom);
 
 DECLARE_GLOBAL_DATA_PTR;
 
@@ -32,7 +30,6 @@ int board_late_init(void)
 
 #if (IS_ENABLED(CONFIG_I2C_EEPROM))
 	at91_ext_board_display_detect(LVDS_MIPI_DISPLAY_EEPROM);
-	at91_ext_board_eth_detect(GB_ETH_SODIMM_EEPROM);
 #endif
 
 	return 0;

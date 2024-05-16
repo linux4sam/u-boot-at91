@@ -135,11 +135,6 @@ void at91_ext_board_display_detect(const char *eeprom)
 {
 	env_set("display", at91_ext_board_detect(eeprom));
 }
-
-void at91_ext_board_eth_detect(const char *eeprom)
-{
-	env_set("eth_phy", at91_ext_board_detect(eeprom));
-}
 #endif
 
 void at91_prepare_cpu_var(void)
