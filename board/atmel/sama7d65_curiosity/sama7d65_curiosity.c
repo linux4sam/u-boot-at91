@@ -18,6 +18,10 @@
 #include <asm/arch/sama7d65.h>
 #include <asm/mach-types.h>
 
+#define LVDS_MIPI_DISPLAY_EEPROM	"eeprom@53"
+
+void at91_ext_board_display_detect(const char *eeprom);
+
 DECLARE_GLOBAL_DATA_PTR;
 
 static void board_leds_init(void)
@@ -29,6 +33,15 @@ static void board_leds_init(void)
 
 int board_late_init(void)
 {
+	/*
+	 * Set PB18 as output high to drive the LCD module
+	 * and avoid read erros with display EEPROM
+	 */
+	atmel_pio4_set_pio_output(AT91_PIO_PORTB, 18, 1);
+
+#if (IS_ENABLED(CONFIG_I2C_EEPROM))
+	at91_ext_board_display_detect(LVDS_MIPI_DISPLAY_EEPROM);
+#endif
 	return 0;
 }
 
