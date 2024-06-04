@@ -18,6 +18,7 @@
 #include <asm/arch/sama7d65.h>
 #include <asm/mach-types.h>
 
+#define ETH_MAC_EEPROM			"eeprom@51"
 #define LVDS_MIPI_DISPLAY_EEPROM	"eeprom@53"
 
 void at91_ext_board_display_detect(const char *eeprom);
@@ -59,6 +60,18 @@ static void board_uart0_hw_init(void)
 void board_debug_uart_init(void)
 {
 	board_uart0_hw_init();
+}
+#endif
+
+#define MAC24AA_MAC_OFFSET     0xfa
+
+#if (IS_ENABLED(CONFIG_MISC_INIT_R))
+int misc_init_r(void)
+{
+#if (IS_ENABLED(CONFIG_I2C_EEPROM))
+	at91_set_eeprom_ethaddr(ETH_MAC_EEPROM, "ethaddr", MAC24AA_MAC_OFFSET);
+#endif
+	return 0;
 }
 #endif
 
