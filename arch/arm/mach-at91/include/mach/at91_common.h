@@ -45,5 +45,7 @@ int at91_set_ethaddr(int offset);
 int at91_set_eth1addr(int offset);
 void at91_spi_nor_set_ethaddr(void);
 int at91_video_show_board_info(void);
+int at91_set_eeprom_ethaddr(const char *eeprom, const char *ethaddr_env,
+			    int offset);
 
 #endif /* AT91_COMMON_H */
