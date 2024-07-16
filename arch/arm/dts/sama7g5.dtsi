@@ -728,6 +728,30 @@
 			};
 		};
 
+		flx5: flexcom@e201c000 {
+			compatible = "atmel,sama5d2-flexcom";
+			reg = <0xe201c000 0x200>;
+			clocks = <&pmc PMC_TYPE_PERIPHERAL 43>;
+			#address-cells = <1>;
+			#size-cells = <1>;
+			ranges = <0x0 0xe201c000 0x800>;
+			status = "disabled";
+
+			i2c5: i2c@600 {
+				compatible = "microchip,sama7g5-i2c", "microchip,sam9x60-i2c";
+				reg = <0x600 0x200>;
+				interrupts = <GIC_SPI 43 IRQ_TYPE_LEVEL_HIGH>;
+				#address-cells = <1>;
+				#size-cells = <0>;
+				clocks = <&pmc PMC_TYPE_PERIPHERAL 43>;
+				atmel,fifo-size = <32>;
+				dmas = <&dma0 AT91_XDMAC_DT_PERID(16)>,
+					<&dma0 AT91_XDMAC_DT_PERID(15)>;
+				dma-names = "tx", "rx";
+				status = "disabled";
+			};
+		};
+
 		flx7: flexcom@e2024000 {
 			compatible = "atmel,sama5d2-flexcom";
 			reg = <0xe2024000 0x200>;
