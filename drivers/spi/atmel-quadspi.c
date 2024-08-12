@@ -256,7 +256,9 @@ struct atmel_qspi_caps {
 	bool has_gclk;
 	bool has_ricr;
 	bool octal;
-	bool is_9x7;
+	bool has_2xgclk;
+	bool has_padcalib;
+	bool has_dllon;
 };
 
 struct atmel_qspi_priv_ops;
@@ -848,11 +850,25 @@ static int atmel_qspi_set_pad_calibration(struct udevice *bus, uint hz)
 			 aq, QSPI_PCALCFG);
 
 	/* DLL On + start calibration. */
-	atmel_qspi_write(QSPI_CR_DLLON | QSPI_CR_STPCAL, aq, QSPI_CR);
-	ret =  readl_poll_timeout(aq->regs + QSPI_SR2, val,
-				  (val & QSPI_SR2_DLOCK) &&
-				  !(val & QSPI_SR2_CALBSY),
-				  ATMEL_QSPI_TIMEOUT);
+	if (aq->caps->has_dllon)
+		atmel_qspi_write(QSPI_CR_DLLON | QSPI_CR_STPCAL, aq, QSPI_CR);
+	/* If there is no DLL support only start calibration. */
+	else
+		atmel_qspi_write(QSPI_CR_STPCAL, aq, QSPI_CR);
+
+	/*
+	 * Check DLL clock lock and synchronization status before updating
+	 * configuration.
+	 */
+	if (aq->caps->has_dllon)
+		ret =  readl_poll_timeout(aq->regs + QSPI_SR2, val,
+					  (val & QSPI_SR2_DLOCK) &&
+					  !(val & QSPI_SR2_CALBSY),
+					  ATMEL_QSPI_TIMEOUT);
+	else
+		ret =  readl_poll_timeout(aq->regs + QSPI_SR2, val,
+					  !(val & QSPI_SR2_CALBSY),
+					  ATMEL_QSPI_TIMEOUT);
 
 	/* Refresh analogic blocks every 1 ms.*/
 	atmel_qspi_write(FIELD_PREP(QSPI_REFRESH_DELAY_COUNTER, hz / 1000),
@@ -868,21 +884,23 @@ static int atmel_qspi_set_gclk(struct udevice *bus, uint hz)
 	u32 status, val;
 	int ret;
 
-	/* Disable DLL before setting GCLK */
-	status = atmel_qspi_read(aq, QSPI_SR2);
-	if (status & QSPI_SR2_DLOCK) {
-		atmel_qspi_write(QSPI_CR_DLLOFF, aq, QSPI_CR);
-		ret = readl_poll_timeout(aq->regs + QSPI_SR2, val,
-					 !(val & QSPI_SR2_DLOCK),
-					 ATMEL_QSPI_TIMEOUT);
-		if (ret)
-			return ret;
-	}
+	if (aq->caps->has_dllon) {
+		/* Disable DLL before setting GCLK */
+		status = atmel_qspi_read(aq, QSPI_SR2);
+		if (status & QSPI_SR2_DLOCK) {
+			atmel_qspi_write(QSPI_CR_DLLOFF, aq, QSPI_CR);
+			ret = readl_poll_timeout(aq->regs + QSPI_SR2, val,
+					!(val & QSPI_SR2_DLOCK),
+					ATMEL_QSPI_TIMEOUT);
+			if (ret)
+				return ret;
+		}
 
-	if (hz > QSPI_DLLCFG_THRESHOLD_FREQ)
-		atmel_qspi_write(QSPI_DLLCFG_RANGE, aq, QSPI_DLLCFG);
-	else
-		atmel_qspi_write(0, aq, QSPI_DLLCFG);
+		if (hz > QSPI_DLLCFG_THRESHOLD_FREQ)
+			atmel_qspi_write(QSPI_DLLCFG_RANGE, aq, QSPI_DLLCFG);
+		else
+			atmel_qspi_write(0, aq, QSPI_DLLCFG);
+	}
 
 	ret = clk_get_by_name(bus, "gclk", &gclk);
 	if (ret) {
@@ -895,11 +913,9 @@ static int atmel_qspi_set_gclk(struct udevice *bus, uint hz)
 		dev_err(bus, "Failed to disable QSPI generic clock\n");
 
 	/*
-	 * In sam9x7, QSPI GCLK is 2x the data rate. The max gclk freq for QSPI
-	 * is 200MHz. It must be programmed at 200 MHz to reach 100 MHz
-	 * on the data.
+	 * In some SoCs like sam9x7, QSPI GCLK is 2x the data rate.
 	 */
-	if (aq->caps->is_9x7)
+	if (aq->caps->has_2xgclk)
 		ret = clk_set_rate(&gclk, (2 * hz));
 	else
 		ret = clk_set_rate(&gclk, hz);
@@ -926,19 +942,19 @@ static int atmel_qspi_sama7g5_set_speed(struct udevice *bus, uint hz)
 		return ret;
 
 	/*
-	 * sam9x7 does not support pad calibration
+	 * Check if the SoC supports pad calibration in Octal SPI mode.
+	 * Proceed only if both the capabilities are true.
 	 */
-	if (!aq->caps->is_9x7) {
-		if (aq->caps->octal) {
-			ret = atmel_qspi_set_pad_calibration(bus, hz);
-			if (ret)
-				return ret;
-		} else {
-			atmel_qspi_write(QSPI_CR_DLLON, aq, QSPI_CR);
-			ret =  readl_poll_timeout(aq->regs + QSPI_SR2, val,
-						  val & QSPI_SR2_DLOCK,
-						  ATMEL_QSPI_TIMEOUT);
-		}
+	if (aq->caps->octal && aq->caps->has_padcalib) {
+		ret = atmel_qspi_set_pad_calibration(bus, hz);
+		if (ret)
+			return ret;
+	/* Start DLL on only if the SoC supports the same */
+	} else if(aq->caps->has_dllon) {
+		atmel_qspi_write(QSPI_CR_DLLON, aq, QSPI_CR);
+		ret =  readl_poll_timeout(aq->regs + QSPI_SR2, val,
+				val & QSPI_SR2_DLOCK,
+				ATMEL_QSPI_TIMEOUT);
 	}
 
 	/* Set the QSPI controller by default in Serial Memory Mode */
@@ -1321,16 +1337,21 @@ static const struct atmel_qspi_caps atmel_sam9x60_qspi_caps = {
 static const struct atmel_qspi_caps atmel_sama7g5_ospi_caps = {
 	.has_gclk = true,
 	.octal = true,
+	.has_padcalib = true,
+	.has_dllon = true,
 };
 
 static const struct atmel_qspi_caps atmel_sama7g5_qspi_caps = {
 	.has_gclk = true,
+	.has_dllon = true,
 };
 
 static const struct atmel_qspi_caps atmel_sam9x7_ospi_caps = {
 	.has_gclk = true,
 	.octal = true,
-	.is_9x7 = true,
+	.has_2xgclk = true,
+	.has_padcalib = false,
+	.has_dllon = false,
 };
 
 static const struct udevice_id atmel_qspi_ids[] = {
