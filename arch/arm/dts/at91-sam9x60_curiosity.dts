@@ -99,6 +99,7 @@
 
 		nand@3 {
 			reg = <0x3 0x0 0x800000>;
+			atmel,rb = <0>;
 			rb-gpios = <&pioD 5 GPIO_ACTIVE_HIGH>;
 			cs-gpios = <&pioD 4 GPIO_ACTIVE_HIGH>;
 			nand-bus-width = <8>;
