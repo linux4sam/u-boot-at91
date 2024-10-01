@@ -1354,6 +1354,20 @@ static const struct atmel_qspi_caps atmel_sam9x7_ospi_caps = {
 	.has_dllon = false,
 };
 
+static const struct atmel_qspi_caps atmel_sama7d65_ospi_caps = {
+	.has_gclk = true,
+	.octal = true,
+	.has_2xgclk = true,
+	.has_padcalib = true,
+	.has_dllon = false,
+};
+
+static const struct atmel_qspi_caps atmel_sama7d65_qspi_caps = {
+	.has_gclk = true,
+	.has_2xgclk = true,
+	.has_dllon = false,
+};
+
 static const struct udevice_id atmel_qspi_ids[] = {
 	{
 		.compatible = "atmel,sama5d2-qspi",
@@ -1374,6 +1388,14 @@ static const struct udevice_id atmel_qspi_ids[] = {
 	{
 		.compatible = "microchip,sam9x7-ospi",
 		.data = (ulong)&atmel_sam9x7_ospi_caps,
+	},
+	{
+		.compatible = "microchip,sama7d65-qspi",
+		.data = (ulong)&atmel_sama7d65_qspi_caps,
+	},
+	{
+		.compatible = "microchip,sama7d65-ospi",
+		.data = (ulong)&atmel_sama7d65_ospi_caps,
 	},
 	{ /* sentinel */ }
 };
