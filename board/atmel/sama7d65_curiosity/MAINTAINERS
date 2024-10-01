@@ -1,7 +1,9 @@
 SAMA7D65 CURIOSITY BOARD
 M:     Ryan Wanner <ryan.wanner@microchip.com>
+M:     Mihai Sain <mihai.sain@microchip.com>
 S:     Maintained
 F:     board/atmel/sama7d65_curiosity.c
 F:     include/configs/sama7d65_curiosity.h
 F:     configs/sama7d65_curiosity_mmc1_defconfig
 F:     configs/sama7d65_curiosity_nandflash_defconfig
+F:     configs/sama7d65_curiosity_qspiflash_defconfig
