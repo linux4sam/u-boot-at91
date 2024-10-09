@@ -1,0 +1,15 @@
+if TARGET_SAMA7D65EB
+
+config SYS_BOARD
+	default "sama7d65eb"
+
+config SYS_VENDOR
+	default "atmel"
+
+config SYS_SOC
+	default "at91"
+
+config SYS_CONFIG_NAME
+	default "sama7d65eb"
+
+endif

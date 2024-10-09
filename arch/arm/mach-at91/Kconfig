@@ -290,6 +290,12 @@ config TARGET_SAMA7G54_CURIOSITY
 	  4Gbit SLC nand-flash, MCP16502 PMIC, 2 x Mikrobus connectors,
 	  1 x SD-Card connector, 1 x M.2 slot, 3 x USB
 
+config TARGET_SAMA7D65EB
+	bool "SAMA7D65EB board"
+	select SAMA7D65
+	select BOARD_EARLY_INIT_F
+	select BOARD_LATE_INIT
+
 config TARGET_SAMA7D65_CURIOSITY
 	bool "SAMA7D65 CURIOSITY board"
 	select SAMA7D65
@@ -363,6 +369,7 @@ source "board/atmel/sam9x75eb/Kconfig"
 source "board/atmel/sam9x75_curiosity/Kconfig"
 source "board/atmel/sama7g5ek/Kconfig"
 source "board/atmel/sama7g54_curiosity/Kconfig"
+source "board/atmel/sama7d65eb/Kconfig"
 source "board/atmel/sama7d65_curiosity/Kconfig"
 source "board/atmel/sama5d2_ptc_ek/Kconfig"
 source "board/atmel/sama5d2_xplained/Kconfig"
