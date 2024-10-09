@@ -3,3 +3,4 @@ M:     Ryan Wanner <ryan.wanner@microchip.com>
 S:     Maintained
 F:     board/atmel/sama7d65eb.c
 F:     include/configs/sama7d65eb.h
+F:     configs/sama7d65eb_mmc_defconfig
