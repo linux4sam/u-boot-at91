@@ -71,6 +71,9 @@ int misc_init_r(void)
 #if (IS_ENABLED(CONFIG_I2C_EEPROM))
 	at91_set_eeprom_ethaddr(ETH_MAC_EEPROM, "ethaddr", MAC24AA_MAC_OFFSET);
 #endif
+#if (IS_ENABLED(CONFIG_SPI_FLASH_SFDP_SUPPORT))
+	at91_spi_nor_set_ethaddr("eth1addr");
+#endif
 	return 0;
 }
 #endif
