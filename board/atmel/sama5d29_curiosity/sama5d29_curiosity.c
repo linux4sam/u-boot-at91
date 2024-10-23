@@ -83,7 +83,7 @@ int board_init(void)
 int misc_init_r(void)
 {
 #if (IS_ENABLED(CONFIG_SPI_FLASH_SFDP_SUPPORT))
-	at91_spi_nor_set_ethaddr();
+	at91_spi_nor_set_ethaddr("ethaddr");
 #endif
 	return 0;
 }

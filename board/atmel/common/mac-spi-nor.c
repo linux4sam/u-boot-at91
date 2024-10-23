@@ -95,12 +95,13 @@ static int sst26vf064beui_get_ethaddr(const u8 *manufacturer_sfdp,
 /**
  * at91_spi_nor_set_ethaddr() - Retrieve and set the ethernet address from the
  * SPI NOR manufacturer specific SFDP table.
+ * @ethaddr_name:	string containing the name of the environment variable
+ *			to store the mac address into.
  */
-void at91_spi_nor_set_ethaddr(void)
+void at91_spi_nor_set_ethaddr(const char *ethaddr_name)
 {
 	struct udevice *dev;
 	struct spi_nor *nor;
-	const char *ethaddr_name = "ethaddr";
 	u8 ethaddr[ETH_ADDR_SIZE] = {0};
 	int ret;
 
