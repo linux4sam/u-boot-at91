@@ -1,0 +1,7 @@
+Microchip PIC64GX Curiosity kit
+M:     Pierre-Henry Moussay <pierre-henry.moussay@microchip.com>
+M:     Cyril Jean <cyril.jean@microchip.com>
+S:     Maintained
+F:     board/microchip/pic64gx_curiosity_kit/
+F:     include/configs/microchip_mpfs_discokit.h
+F:     configs/microchip_pic64gx_curiosity_kit_defconfig
