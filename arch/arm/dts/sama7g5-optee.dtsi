@@ -100,3 +100,15 @@
 &pioA {
 	clocks = <&scmi0_clock AT91_SCMI_CLK_PERIPH_PIOA_CLK>;
 };
+
+&qspi0 {
+	clocks = <&scmi0_clock AT91_SCMI_CLK_PERIPH_QSPI0_CLK>, <&scmi0_clock AT91_SCMI_CLK_GCK_QSPI0_GCLK>;
+	/delete-property/assigned-clocks;
+	/delete-property/assigned-clock-parents;
+};
+
+&qspi1 {
+	clocks = <&scmi0_clock AT91_SCMI_CLK_PERIPH_QSPI1_CLK>, <&scmi0_clock AT91_SCMI_CLK_GCK_QSPI1_GCLK>;
+	/delete-property/assigned-clocks;
+	/delete-property/assigned-clock-parents;
+};
