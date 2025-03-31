@@ -360,9 +360,9 @@
 			interrupts = <GIC_SPI 75 IRQ_TYPE_LEVEL_HIGH>;
 			clocks = <&pmc PMC_TYPE_PERIPHERAL 75>, <&pmc PMC_TYPE_GCK 75>;
 			clock-names = "hclock", "multclk";
-			assigned-clock-parents = <&pmc PMC_TYPE_CORE 10>; /* sys pll div. */
 			assigned-clocks = <&pmc PMC_TYPE_GCK 75>;
 			assigned-clock-rates = <200000000>;
+			assigned-clock-parents = <&pmc PMC_TYPE_CORE 10>; /* MCK1 div */
 			microchip,sdcal-inverted;
 			status = "disabled";
 		};
