@@ -1149,11 +1149,13 @@ static const struct pmc_clk_setup sama7d65_clk_setup[] = {
 	{
 		.cid = AT91_TO_CLK_ID(PMC_TYPE_CORE, ID_PLL_ETH_FRAC),
 		.rate = 625000000,
+		.enable = true,
 	},
 
 	{
 		.cid = AT91_TO_CLK_ID(PMC_TYPE_CORE, ID_PLL_ETH_DIV),
 		.rate = 625000000,
+		.enable = true,
 	},
 };
 
