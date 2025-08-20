@@ -99,6 +99,7 @@ struct pmc_clk_setup {
 	unsigned int pid;
 	unsigned long rate;
 	unsigned long prate;
+	bool enable;
 };
 
 extern const struct clk_programmable_layout at91rm9200_programmable_layout;

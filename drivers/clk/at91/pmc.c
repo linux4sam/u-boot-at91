@@ -157,6 +157,13 @@ int at91_clk_setup(const struct pmc_clk_setup *setup, int size)
 			if (ret < 0)
 				return ret;
 		}
+
+		if (setup[i].enable) {
+			ret = clk_enable(c);
+			if (ret < 0)
+				return ret;
+		}
+
 	}
 
 	return 0;
