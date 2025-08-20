@@ -240,6 +240,7 @@ static const struct clk_pcr_layout sama7d65_pcr_layout = {
 	.cmd = BIT(31),
 	.gckcss_mask = GENMASK(12, 8),
 	.pid_mask = GENMASK(6, 0),
+	.gclk_status = true,
 };
 
 /**
