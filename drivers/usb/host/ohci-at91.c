@@ -166,9 +166,8 @@ static void at91_stop_hc(struct udevice *dev)
 static int ohci_atmel_deregister(struct udevice *dev)
 {
 	struct at91_usbh_data *pdata = dev_get_plat(dev);
-	int i;
+	int i, ret = 0;
 
-	at91_stop_hc(dev);
 
 	at91_for_each_port(i) {
 		if (i >= pdata->ports)
@@ -177,7 +176,10 @@ static int ohci_atmel_deregister(struct udevice *dev)
 		ohci_at91_set_power(pdata, i, false);
 	}
 
-	return ohci_deregister(dev);
+	ret = ohci_deregister(dev);
+	at91_stop_hc(dev);
+
+	return ret;
 }
 
 static int ohci_atmel_child_pre_probe(struct udevice *dev)
