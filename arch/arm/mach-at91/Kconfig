@@ -296,6 +296,12 @@ config TARGET_SAMA7D65EB
 	select BOARD_EARLY_INIT_F
 	select BOARD_LATE_INIT
 
+config TARGET_SAMA7D65_CURIOSITY_PRO
+	bool "SAMA7D65 CURIOSITY PRO board"
+	select SAMA7D65
+	select BOARD_EARLY_INIT_F
+	select BOARD_LATE_INIT
+
 config TARGET_SAMA7D65_CURIOSITY
 	bool "SAMA7D65 CURIOSITY board"
 	select SAMA7D65
@@ -371,6 +377,7 @@ source "board/atmel/sama7g5ek/Kconfig"
 source "board/atmel/sama7g54_curiosity/Kconfig"
 source "board/atmel/sama7d65eb/Kconfig"
 source "board/atmel/sama7d65_curiosity/Kconfig"
+source "board/atmel/sama7d65_curiosity_pro/Kconfig"
 source "board/atmel/sama5d2_ptc_ek/Kconfig"
 source "board/atmel/sama5d2_xplained/Kconfig"
 source "board/atmel/sama5d27_som1_ek/Kconfig"
