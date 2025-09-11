@@ -1,0 +1,142 @@
+// SPDX-License-Identifier: (GPL-2.0+ OR MIT)
+/*
+ *  at91-sama7d65_curiosity_pro-u-boot.dtsi - Device Tree Include file for
+ *  SAMA7D65 CURIOSITY PRO.
+ *
+ *  Copyright (c) 2026 Microchip Technology Inc. and its subsidiaries
+ *
+ *  Author: Varshini Rajendran <varshini.rajendran@microchip.com>
+ */
+
+/{
+
+	soc {
+		bootph-all;
+
+		nfc_sram: sram@600000 {
+			compatible = "mmio-sram";
+			no-memory-wc;
+			reg = <0x00600000 0x2400>;
+			#address-cells = <1>;
+			#size-cells = <1>;
+			ranges = <0 0x00600000 0x2400>;
+		};
+
+		nfc_io: nfc-io@10000000 {
+			compatible = "atmel,sama5d3-nfc-io", "syscon";
+			reg = <0x10000000 0x8000000>;
+		};
+
+		ebi: ebi@40000000 {
+			compatible = "microchip,sama7d65-ebi", "atmel,sama5d3-ebi";
+			#address-cells = <2>;
+			#size-cells = <1>;
+			atmel,smc = <&hsmc>;
+			reg = <0x40000000 0x18000000>;
+			ranges = <0x0 0x0 0x40000000 0x8000000
+				  0x1 0x0 0x48000000 0x10000000>;
+			clocks = <&pmc PMC_TYPE_CORE 31>; /* PMC_MCK5 */
+			pinctrl-names = "default";
+			pinctrl-0 = <&pinctrl_nand_default>;
+
+			nand_controller: nand-controller {
+				compatible = "atmel,sama7d65-nand-controller", "atmel,sama5d3-nand-controller";
+				atmel,nfc-sram = <&nfc_sram>;
+				atmel,nfc-io = <&nfc_io>;
+				ecc-engine = <&pmecc>;
+				#address-cells = <2>;
+				#size-cells = <1>;
+				ranges;
+
+				nand@0 {
+					reg = <0x0 0x0 0x1000000>;
+					atmel,rb = <0>;
+					nand-bus-width = <8>;
+					nand-ecc-mode = "hw";
+					nand-ecc-strength = <8>;
+					nand-ecc-step-size = <512>;
+					nand-on-flash-bbt;
+					label = "at91-nand";
+				};
+			};
+		};
+
+		hsmc: hsmc@e0808000 {
+			compatible = "atmel,sama5d2-smc", "syscon", "simple-mfd";
+			reg = <0xe0808000 0x1000>;
+			interrupts = <GIC_SPI 20 IRQ_TYPE_LEVEL_HIGH>;
+			clocks = <&pmc PMC_TYPE_PERIPHERAL 20>;
+			#address-cells = <1>;
+			#size-cells = <1>;
+			ranges;
+
+			pmecc: ecc-engine@e0808070 {
+				compatible = "microchip,sama7d65-pmecc", "atmel,sama5d2-pmecc";
+				reg = <0xe0808070 0x490>,
+				      <0xe0808500 0x200>;
+			};
+		};
+
+		qspi0: spi@e080c000 {
+			compatible = "microchip,sama7d65-ospi";
+			reg = <0xe080c000 0x400>, <0x20000000 0x1000000>; // limit to 16 MiB
+			reg-names = "qspi_base", "qspi_mmap"; // mmap max size 256 MiB
+			interrupts = <GIC_SPI 73 IRQ_TYPE_LEVEL_HIGH>;
+			dmas = <&dma0 AT91_XDMAC_DT_PERID(41)>,
+			       <&dma0 AT91_XDMAC_DT_PERID(40)>;
+			dma-names = "tx", "rx";
+			clocks = <&pmc PMC_TYPE_PERIPHERAL 73>, <&pmc PMC_TYPE_GCK 73>;
+			clock-names = "pclk", "gclk";
+			assigned-clock-parents = <&pmc PMC_TYPE_CORE 10>; // ID_PLL_SYS_DIV
+			assigned-clocks = <&pmc PMC_TYPE_GCK 73>;
+			#address-cells = <1>;
+			#size-cells = <0>;
+			pinctrl-names = "default";
+			pinctrl-0 = <&pinctrl_qspi0_default>;
+
+			flash@0 {
+				compatible = "jedec,spi-nor";
+				reg = <0x0>;
+				spi-max-frequency = <100000000>;
+				spi-tx-bus-width = <4>;
+				spi-rx-bus-width = <4>;
+				m25p,fast-read;
+			};
+		};
+	};
+};
+
+&pioa {
+	bootph-all;
+
+	pinctrl_nand_default: nand-default {
+		pinmux = <PIN_PA0__NWER0>,
+			 <PIN_PA1__A21>,
+			 <PIN_PA2__A22>,
+			 <PIN_PA3__D0>,
+			 <PIN_PA4__D1>,
+			 <PIN_PA5__D4>,
+			 <PIN_PA6__D5>,
+			 <PIN_PA7__D6>,
+			 <PIN_PA8__D7>,
+			 <PIN_PA9__D2>,
+			 <PIN_PA10__D3>,
+			 <PIN_PA11__NANDRDY>,
+			 <PIN_PA12__NRD>,
+			 <PIN_PA13__NCS0>;
+		slew-rate = <0>;
+		bias-disable;
+	};
+
+	pinctrl_qspi0_default: qspi0-default {
+		pinmux = <PIN_PB8__QSPI0_IO3>,
+			 <PIN_PB9__QSPI0_IO2>,
+			 <PIN_PB10__QSPI0_IO1>,
+			 <PIN_PB11__QSPI0_IO0>,
+			 <PIN_PB12__QSPI0_CS>,
+			 <PIN_PB13__QSPI0_SCK>;
+		bias-disable;
+		atmel,drive-strength = <ATMEL_PIO_DRVSTR_2>;
+		slew-rate = <0>;
+	};
+};
