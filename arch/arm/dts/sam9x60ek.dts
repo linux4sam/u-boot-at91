@@ -17,6 +17,7 @@
 	chosen {
 		stdout-path = &dbgu;
 		i2c0 = &flx0;
+		tick-timer = &pit;
 	};
 
 	clocks {
