@@ -10,6 +10,7 @@
 #define __ATMEL_HLCDC_H__
 
 /* Atmel multi layer lcdc hardware registers */
+#if defined(CONFIG_SAMA5D2)
 struct atmel_hlcd_regs {
 	u32	lcdc_lcdcfg0;
 	u32	lcdc_lcdcfg1;
@@ -38,6 +39,36 @@ struct atmel_hlcd_regs {
 	u32	lcdc_basecfg3;
 	u32	lcdc_basecfg4;
 };
+#elif defined(CONFIG_SAM9X60)
+struct atmel_hlcd_regs {
+	u32	lcdc_lcdcfg0;
+	u32	lcdc_lcdcfg1;
+	u32	lcdc_lcdcfg2;
+	u32	lcdc_lcdcfg3;
+	u32	lcdc_lcdcfg4;
+	u32	lcdc_lcdcfg5;
+	u32	lcdc_lcdcfg6;
+	u32	lcdc_lcdcfg7;
+	u32	lcdc_lcden;
+	u32	lcdc_lcddis;
+	u32	lcdc_lcdsr;
+	u32	lcdc_lcdier;
+	u32	lcdc_lcdidr;
+	u32	res1[11];
+	u32	lcdc_basecher;
+	u32	res2[3];
+	u32	lcdc_baseidr;
+	u32	res3[3];
+	u32	lcdc_baseaddr;
+	u32	lcdc_basectrl;
+	u32	lcdc_basenext;
+	u32	lcdc_basecfg0;
+	u32	lcdc_basecfg1;
+	u32	lcdc_basecfg2;
+	u32	lcdc_basecfg3;
+	u32	lcdc_basecfg4;
+};
+#endif
 
 #define LCDC_LCDCFG0_CLKPOL	(0x1 << 0)
 #define LCDC_LCDCFG0_CLKSEL	(0x1 << 2)

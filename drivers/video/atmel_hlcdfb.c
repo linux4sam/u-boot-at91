@@ -53,11 +53,30 @@ static int at91_hlcdc_enable_clk(struct udevice *dev)
 	if (ret)
 		return ret;
 
+#if defined(CONFIG_SAMA5D2)
 	clk_rate = clk_get_rate(&clk);
 	if (!clk_rate) {
 		clk_disable(&clk);
 		return -ENODEV;
 	}
+#elif defined(CONFIG_SAM9X60)
+	struct clk gclk;
+
+	ret = clk_get_by_index(dev, 1, &gclk);
+	if (ret)
+		return -EINVAL;
+
+	ret = clk_enable(&gclk);
+	if (ret)
+		return ret;
+	clk_rate = clk_get_rate(&gclk);
+	if (!clk_rate) {
+		clk_disable(&gclk);
+		return -ENODEV;
+	}
+	/* Delay to let the clocks stablilize */
+	udelay(1000);
+#endif
 
 	priv->clk_rate = clk_rate;
 
