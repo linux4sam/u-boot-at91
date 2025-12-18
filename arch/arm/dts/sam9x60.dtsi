@@ -191,6 +191,13 @@
 				status = "disabled";
 			};
 
+			hlcdc: hlcdc@f8038000 {
+				compatible = "microchip,sam9x60-hlcdc", "atmel,at91sam9x5-hlcdc";
+				reg = <0xf8038000 0x4000>;
+				clocks = <&pmc PMC_TYPE_PERIPHERAL 25>, <&pmc PMC_TYPE_GCK 25>;
+				status = "disabled";
+			};
+
 			sfr: sfr@f8050000 {
 				compatible = "microchip,sam9x60-sfr", "syscon";
 				reg = <0xf8050000 0x100>;

@@ -175,6 +175,35 @@
 	};
 };
 
+&hlcdc {
+	atmel,vl-bpix = <4>;
+	atmel,output-mode = <24>;
+	atmel,guard-time = <1>;
+	pinctrl-names = "default";
+	pinctrl-0 = <&pinctrl_lcd_base &pinctrl_lcd_pwm &pinctrl_lcd_rgb666>;
+	assigned-clocks = <&pmc PMC_TYPE_GCK 25>;
+	assigned-clock-rates = <66666667>;
+	assigned-clock-parents = <&pmc PMC_TYPE_CORE 10>; /* ID_PLL_A_DIV */
+	status = "okay";
+
+	display-timings {
+		bootph-all;
+		800x480 {
+			clock-frequency = <33333334>;
+			xres = <800>;
+			yres = <480>;
+			hactive = <800>;
+			vactive = <480>;
+			hsync-len = <64>;
+			hfront-porch = <1>;
+			hback-porch = <64>;
+			vfront-porch = <1>;
+			vback-porch = <22>;
+			vsync-len = <23>;
+		};
+	};
+};
+
 &macb0 {
 	phy-mode = "rmii";
 	pinctrl-names = "default";
@@ -222,6 +251,41 @@
 	gpio-keys {
 		pinctrl_key_gpio_default: pinctrl-key-gpio {
 			atmel,pins = <AT91_PIOA 29 AT91_PERIPH_GPIO AT91_PINCTRL_NONE>;
+		};
+	};
+
+	hlcdc {
+		pinctrl_lcd_base: lcd-base {
+			atmel,pins = <AT91_PIOC 27 AT91_PERIPH_A AT91_PINCTRL_NONE	/* LCDVSYNC */
+				      AT91_PIOC 28 AT91_PERIPH_A AT91_PINCTRL_NONE	/* LCDHSYNC */
+				      AT91_PIOC 24 AT91_PERIPH_A AT91_PINCTRL_NONE	/* LCDDISP */
+				      AT91_PIOC 29 AT91_PERIPH_A AT91_PINCTRL_NONE	/* LCDDEN */
+				      AT91_PIOC 30 AT91_PERIPH_A AT91_PINCTRL_NONE>;	/* LCDPCK */
+		};
+
+		pinctrl_lcd_pwm: lcd-pwm {
+			atmel,pins = <AT91_PIOC 26 AT91_PERIPH_A AT91_PINCTRL_NONE>;
+		};
+
+		pinctrl_lcd_rgb666: lcd-rgb666 {
+			atmel,pins = <AT91_PIOC 2 AT91_PERIPH_A AT91_PINCTRL_NONE	/* LCDD2 pin */
+				      AT91_PIOC 3 AT91_PERIPH_A AT91_PINCTRL_NONE	/* LCDD3 pin */
+				      AT91_PIOC 4 AT91_PERIPH_A AT91_PINCTRL_NONE	/* LCDD4 pin */
+				      AT91_PIOC 5 AT91_PERIPH_A AT91_PINCTRL_NONE	/* LCDD5 pin */
+				      AT91_PIOC 6 AT91_PERIPH_A AT91_PINCTRL_NONE	/* LCDD6 pin */
+				      AT91_PIOC 7 AT91_PERIPH_A AT91_PINCTRL_NONE	/* LCDD7 pin */
+				      AT91_PIOC 10 AT91_PERIPH_A AT91_PINCTRL_NONE	/* LCDD10 pin */
+				      AT91_PIOC 11 AT91_PERIPH_A AT91_PINCTRL_NONE	/* LCDD11 pin */
+				      AT91_PIOC 12 AT91_PERIPH_A AT91_PINCTRL_NONE	/* LCDD12 pin */
+				      AT91_PIOC 13 AT91_PERIPH_A AT91_PINCTRL_NONE	/* LCDD13 pin */
+				      AT91_PIOC 14 AT91_PERIPH_A AT91_PINCTRL_NONE	/* LCDD14 pin */
+				      AT91_PIOC 15 AT91_PERIPH_A AT91_PINCTRL_NONE	/* LCDD15 pin */
+				      AT91_PIOC 18 AT91_PERIPH_A AT91_PINCTRL_NONE	/* LCDD18 pin */
+				      AT91_PIOC 19 AT91_PERIPH_A AT91_PINCTRL_NONE	/* LCDD19 pin */
+				      AT91_PIOC 20 AT91_PERIPH_A AT91_PINCTRL_NONE	/* LCDD20 pin */
+				      AT91_PIOC 21 AT91_PERIPH_A AT91_PINCTRL_NONE	/* LCDD21 pin */
+				      AT91_PIOC 22 AT91_PERIPH_A AT91_PINCTRL_NONE	/* LCDD22 pin */
+				      AT91_PIOC 23 AT91_PERIPH_A AT91_PINCTRL_NONE>;	/* LCDD23 pin */
 		};
 	};
 
