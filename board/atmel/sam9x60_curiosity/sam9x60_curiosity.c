@@ -39,6 +39,9 @@ int board_late_init(void)
 {
 	at91_prepare_cpu_var();
 
+#ifdef CONFIG_VIDEO
+	at91_video_show_board_info();
+#endif
 	at91_pda_detect();
 
 	return 0;
