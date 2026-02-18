@@ -933,6 +933,9 @@ dtb-$(CONFIG_TARGET_SAM9X60_CURIOSITY) += at91-sam9x60_curiosity.dtb
 
 dtb-$(CONFIG_TARGET_SAM9X75EB) += at91-sam9x75eb.dtb
 
+dtb-$(CONFIG_TARGET_SAM9X75_CURIOSITY_PRO) += \
+	at91-sam9x75_curiosity_pro.dtb
+
 dtb-$(CONFIG_TARGET_AT91SAM9N12EK) += at91sam9n12ek.dtb
 
 dtb-$(CONFIG_TARGET_GARDENA_SMART_GATEWAY_AT91SAM) += \
