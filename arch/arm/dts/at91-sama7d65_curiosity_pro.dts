@@ -26,6 +26,7 @@
 	aliases {
 		serial0 = &uart6;
 		i2c0 = &i2c10;
+		ethernet1 = &gmac1;
 	};
 
 	clocks {
