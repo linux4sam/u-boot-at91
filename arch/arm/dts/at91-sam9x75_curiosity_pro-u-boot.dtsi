@@ -116,7 +116,7 @@
 	#address-cells = <1>;
 	#size-cells = <0>;
 	pinctrl-names = "default";
-	pinctrl-0 = <&pinctrl_gmac_rgmii_default &pinctrl_gmac_irq_defualt>;
+	pinctrl-0 = <&pinctrl_gmac_rgmii_default>;
 	magic-packet;
 	status = "okay";
 
@@ -127,12 +127,13 @@
 	};
 };
 
-&i2c7 {
+&i2c6 {
 	#address-cells = <1>;
 	#size-cells = <0>;
-	eeprom1: eeprom@53 {
+
+	eeprom1: eeprom@54 {
 		compatible = "atmel,24c01";
-		reg = <0x53>;
+		reg = <0x54>;
 		pagesize = <8>;
 		status = "okay";
 	};
@@ -140,6 +141,33 @@
 
 &main_xtal {
 	bootph-all;
+};
+
+&pinctrl {
+	gmac  {
+		pinctrl_gmac_rgmii_default: gmac-rgmii-default {
+			atmel,pins =
+				<AT91_PIOB 13 AT91_PERIPH_A  AT91_PINCTRL_SLEWRATE_DIS                          /* ETH_TX0   */
+				 AT91_PIOB 14 AT91_PERIPH_A  AT91_PINCTRL_SLEWRATE_DIS                          /* ETH_TX1   */
+				 AT91_PIOB 4  AT91_PERIPH_A  AT91_PINCTRL_SLEWRATE_DIS                          /* ETH_TX2   */
+				 AT91_PIOB 5  AT91_PERIPH_A  AT91_PINCTRL_SLEWRATE_DIS                          /* ETH_TX3   */
+				 AT91_PIOB 7  AT91_PERIPH_A  AT91_PINCTRL_SLEWRATE_DIS                          /* ETH_TXCTL  */
+				 AT91_PIOB 6  AT91_PERIPH_A (AT91_PINCTRL_PULL_UP | AT91_PINCTRL_SLEWRATE_DIS)  /* ETH_TXCK  */
+
+				 AT91_PIOB 11 AT91_PERIPH_A  AT91_PINCTRL_SLEWRATE_DIS                          /* ETH_RX0   */
+				 AT91_PIOB 12 AT91_PERIPH_A  AT91_PINCTRL_SLEWRATE_DIS                          /* ETH_RX1   */
+				 AT91_PIOB 0  AT91_PERIPH_A  AT91_PINCTRL_SLEWRATE_DIS                          /* ETH_RX2   */
+				 AT91_PIOB 1  AT91_PERIPH_A  AT91_PINCTRL_SLEWRATE_DIS                          /* ETH_RX3   */
+				 AT91_PIOB 8  AT91_PERIPH_A  AT91_PINCTRL_SLEWRATE_DIS                          /* ETH_RXCK   */
+				 AT91_PIOB 3  AT91_PERIPH_A  AT91_PINCTRL_SLEWRATE_DIS                          /* ETH_RXCTL */
+
+				 AT91_PIOB 10 AT91_PERIPH_A  AT91_PINCTRL_NONE                                  /* ETH_MDC   */
+				 AT91_PIOB 9  AT91_PERIPH_A  AT91_PINCTRL_NONE                                  /* ETH_MDIO  */
+
+				 AT91_PIOB 2  AT91_PERIPH_A  AT91_PINCTRL_SLEWRATE_DIS                          /* ETH_125CK */
+				 AT91_PIOD 5  AT91_PERIPH_GPIO  AT91_PINCTRL_NONE>;                             /* ETH_INT   */
+		};
+	};
 };
 
 &pinctrl_dbgu_default {
@@ -156,28 +184,6 @@
 
 &pioB {
 	bootph-all;
-
-	pinctrl_gmac_rgmii_default: gmac-rgmii-default {
-			atmel,pins =
-				<AT91_PIOB 13 AT91_PERIPH_A  AT91_PINCTRL_SLEWRATE_DIS>,                          /* ETH_TX0   */
-				<AT91_PIOB 14 AT91_PERIPH_A  AT91_PINCTRL_SLEWRATE_DIS>,                          /* ETH_TX1   */
-				<AT91_PIOB 4  AT91_PERIPH_A  AT91_PINCTRL_SLEWRATE_DIS>,                          /* ETH_TX2   */
-				<AT91_PIOB 5  AT91_PERIPH_A  AT91_PINCTRL_SLEWRATE_DIS>,                          /* ETH_TX3   */
-				<AT91_PIOB 7  AT91_PERIPH_A  AT91_PINCTRL_SLEWRATE_DIS>,                          /* ETH_TXCTL  */
-				<AT91_PIOB 6  AT91_PERIPH_A (AT91_PINCTRL_PULL_UP | AT91_PINCTRL_SLEWRATE_DIS)>,  /* ETH_TXCK  */
-
-				<AT91_PIOB 11 AT91_PERIPH_A  AT91_PINCTRL_SLEWRATE_DIS>,                          /* ETH_RX0   */
-				<AT91_PIOB 12 AT91_PERIPH_A  AT91_PINCTRL_SLEWRATE_DIS>,                          /* ETH_RX1   */
-				<AT91_PIOB 0  AT91_PERIPH_A  AT91_PINCTRL_SLEWRATE_DIS>,                          /* ETH_RX2   */
-				<AT91_PIOB 1  AT91_PERIPH_A  AT91_PINCTRL_SLEWRATE_DIS>,                          /* ETH_RX3   */
-				<AT91_PIOB 8  AT91_PERIPH_A  AT91_PINCTRL_SLEWRATE_DIS>,                          /* ETH_RXCK   */
-				<AT91_PIOB 3  AT91_PERIPH_A  AT91_PINCTRL_SLEWRATE_DIS>,                          /* ETH_RXCTL */
-
-				<AT91_PIOB 10 AT91_PERIPH_A  AT91_PINCTRL_NONE>,                                  /* ETH_MDC   */
-				<AT91_PIOB 9  AT91_PERIPH_A  AT91_PINCTRL_NONE>,                                  /* ETH_MDIO  */
-
-				<AT91_PIOB 2  AT91_PERIPH_A  AT91_PINCTRL_SLEWRATE_DIS>;                        /* ETH_125CK */
-		};
 };
 
 &pioC {
@@ -194,6 +200,8 @@
 };
 
 &pioD {
+	bootph-all;
+
 	pinctrl_nand_oe_we: nand-oe-we-0 {
 		atmel,pins =
 			<AT91_PIOD 0 AT91_PERIPH_A (AT91_PINCTRL_NONE | AT91_PINCTRL_SLEWRATE_DIS)>,
@@ -208,10 +216,6 @@
 	pinctrl_nand_cs: nand-cs-0 {
 		atmel,pins =
 			<AT91_PIOD 4 AT91_PERIPH_GPIO AT91_PINCTRL_PULL_UP>;
-	};
-
-	pinctrl_gmac_irq_defualt: gmac-irq-default {
-		atmel,pins = <AT91_PIOD 5  AT91_PERIPH_GPIO  AT91_PINCTRL_NONE>;                        /* ETH_INT   */
 	};
 };
 
