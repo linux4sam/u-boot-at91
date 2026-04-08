@@ -139,6 +139,18 @@
 	};
 };
 
+&i2c7 {
+	#address-cells = <1>;
+	#size-cells = <0>;
+
+	eeprom@53 {
+		compatible = "atmel,24c01";
+		reg = <0x53>;
+		pagesize = <8>;
+		status = "okay";
+	};
+};
+
 &main_xtal {
 	bootph-all;
 };
