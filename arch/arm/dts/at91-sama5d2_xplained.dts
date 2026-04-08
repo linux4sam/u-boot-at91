@@ -16,7 +16,11 @@
 	};
 
 	memory {
+#ifdef CONFIG_CLK_SCMI
+		reg = <0x22000000 0x1E000000>;
+#else
 		reg = <0x20000000 0x20000000>;
+#endif
 	};
 
 	clocks {
