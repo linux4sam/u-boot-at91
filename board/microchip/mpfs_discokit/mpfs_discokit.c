@@ -91,8 +91,6 @@ int board_late_init(void)
 			return -ENODEV;
 		}
 	}
-
-	mpfs_syscontroller_process_dtbo(sys_serv_priv);
 #endif
 
 	return 0;
