@@ -1,0 +1,7 @@
+Microchip MPFS Motor Control Kit
+M:	Shravan Chippa <shravan.chippa@microchip.com>
+M:	Vattipalli Praveen <praveen.kumar@microchip.com>
+S:	Maintained
+F:	board/microchip/mpfs_motor_control_kit/
+F:	include/configs/microchip_mpfs_motor_control_kit.h
+F:	configs/microchip_mpfs_motor_control_kit_defconfig
