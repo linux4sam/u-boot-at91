@@ -13,6 +13,7 @@ dtb-$(CONFIG_TARGET_XILINX_MBV) += xilinx-mbv32.dtb
 dtb-$(CONFIG_TARGET_XILINX_MBV) += xilinx-mbv64.dtb
 dtb-$(CONFIG_TARGET_XILINX_MBV) += xilinx-binman.dtb
 dtb-$(CONFIG_TARGET_ASPEED_AST2700_IBEX) += ast2700-ibex.dtb
+dtb-$(CONFIG_TARGET_MICROCHIP_RTPFS_DEV_KIT) += microchip-rtpfs-dev-kit.dtb
 
 include $(srctree)/scripts/Makefile.dts
 
