@@ -32,6 +32,9 @@ config TARGET_MICROCHIP_ICICLE
 config TARGET_MICROCHIP_DISCOKIT
 	bool "Support Microchip PolarFire-SoC Discovery Board"
 
+config TARGET_MICROCHIP_RTPFS_DEV_KIT
+	bool "Support Microchip Radiation-Tolerant (RT) PolarFire SoC Dev Kit"
+
 config TARGET_MICROCHIP_PIC64GX_CURIOSITY
 	bool "Support Microchip PIC64GX-SoC Curiosity Kit"
 	help
@@ -141,6 +144,7 @@ source "board/canaan/k230_canmv/Kconfig"
 source "board/emulation/qemu-riscv/Kconfig"
 source "board/microchip/mpfs_icicle/Kconfig"
 source "board/microchip/mpfs_discokit/Kconfig"
+source "board/microchip/rtpfs_dev_kit/Kconfig"
 source "board/microchip/mpfs_videokit/Kconfig"
 source "board/microchip/pic64gx_curiosity_kit/Kconfig"
 source "board/microchip/mpfs_motor_control_kit/Kconfig"

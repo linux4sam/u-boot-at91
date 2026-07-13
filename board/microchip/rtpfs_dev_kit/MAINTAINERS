@@ -1,0 +1,7 @@
+Microchip MPFS icicle
+M:	Jamie Gibbons <jamie.gibbons@microchip.com>
+M:	Cyril Jean <cyril.jean@microchip.com>
+S:	Maintained
+F:	board/microchip/rtpfs_dev_kit/
+F:	include/configs/microchip_rtpfs_dev_kit.h
+F:	configs/microchip_rtpfs_dev_kit_defconfig
