@@ -26,13 +26,13 @@
 
 	ahb {
 		bootph-all;
+	};
 
-		apb {
+	apb {
+		bootph-all;
+
+		pinctrl {
 			bootph-all;
-
-			pinctrl {
-				bootph-all;
-			};
 		};
 	};
 
