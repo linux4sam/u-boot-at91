@@ -28,4 +28,16 @@ config MICROCHIP_MPFS
 	imply MMC_HS200_SUPPORT
 	imply SPI
 	imply DM_SPI
-	imply MICROCHIP_QSPI
+	imply MICROCHIP_COREQSPI
+	imply DM_MAILBOX
+	imply MPFS_MBOX
+	imply MISC
+	imply MPFS_SYSCONTROLLER
+
+config MPFS_PRIORITISE_QSPI_BOOT
+	bool "prioritise booting from QSPI"
+	default MICROCHIP_COREQSPI
+	depends on MICROCHIP_MPFS
+	depends on MICROCHIP_COREQSPI
+	help
+	  "Disable to remove boot from qspi prioritisation"

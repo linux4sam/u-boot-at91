@@ -1,0 +1,6 @@
+Aries M100PFSEVP Board
+M:	Wolfgang Grandegger <wg@aries-embedded.de>
+S:	Maintained
+F:	board/aries/m100pfsevp/
+F:	include/configs/m100pfsevp.h
+F:	configs/m100pfsevp_defconfig

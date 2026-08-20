@@ -329,6 +329,7 @@ static int mpfs_syscontroller_probe(struct udevice *dev)
 
 static const struct udevice_id mpfs_syscontroller_ids[] = {
 	{ .compatible = "microchip,mpfs-sys-controller" },
+	{ .compatible = "microchip,pic64gx-sys-controller" },
 	{ }
 };
 

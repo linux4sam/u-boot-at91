@@ -8,6 +8,9 @@ choice
 	prompt "Target select"
 	optional
 
+config TARGET_ARIES_M100PFSEVP
+	bool "Support Aries M100PFSEVP PolarFire SoC-FPGA Platform"
+
 config TARGET_ANDES_AE350
 	bool "Support Andes ae350"
 
@@ -28,6 +31,32 @@ config TARGET_LICHEERV_NANO
 
 config TARGET_MICROCHIP_GENERIC
 	bool "Support Microchip PolarFire-SoC Boards"
+
+config TARGET_MICROCHIP_DISCOKIT
+	bool "Support Microchip PolarFire-SoC Discovery Board"
+
+config TARGET_MICROCHIP_RTPFS_DEV_KIT
+	bool "Support Microchip Radiation-Tolerant (RT) PolarFire SoC Dev Kit"
+
+config TARGET_MICROCHIP_PIC64GX_CURIOSITY
+	bool "Support Microchip PIC64GX-SoC Curiosity Kit"
+	help
+	  Support for Microchip PIC64GX Curiosity Kit platform.
+	  The Curiosity-GX10000 (PIC64GX SoC Curiosity Kit) is a compact SoC
+	  prototyping board featuring a Microchip PIC64GX SoC
+	  PIC64GX-1000. Features include:
+	  - 1 GB DDR4 SDRAM
+	  - Gigabit Ethernet
+	  - microSD-card slot
+
+config TARGET_SUNDANCEDSP_POLARBERRY
+	bool "Support SundanceDSP Polarberry Board (based on Microchip MPFS)"
+
+config TARGET_MICROCHIP_MOTOR_CONTROL
+	bool "Support Microchip PolarFire-SoC Motor Control Board"
+
+config TARGET_ALDEC_TYSOM_M_MPFS250T
+	bool "Support Aldec TySoM M MPFS250T Board"
 
 config TARGET_MILKV_DUO
 	bool "Support Milk-v Duo Board"
@@ -106,14 +135,21 @@ config SPL_ZERO_MEM_BEFORE_USE
 	  Sifive core devices that uses L2 cache to store SPL.
 
 # board-specific options below
+source "board/aldec/tysom-m-mpfs250t/Kconfig"
 source "board/andestech/ae350/Kconfig"
 source "board/andestech/voyager/Kconfig"
+source "board/aries/m100pfsevp/Kconfig"
 source "board/aspeed/ibex_ast2700/Kconfig"
 source "board/beagle/beaglev_fire/Kconfig"
 source "board/canaan/k230_canmv/Kconfig"
 source "board/emulation/qemu-riscv/Kconfig"
 source "board/microchip/mpfs_generic/Kconfig"
+source "board/microchip/mpfs_discokit/Kconfig"
+source "board/microchip/rtpfs_dev_kit/Kconfig"
+source "board/microchip/pic64gx_curiosity_kit/Kconfig"
+source "board/microchip/mpfs_motor_control_kit/Kconfig"
 source "board/openpiton/riscv64/Kconfig"
+source "board/sundancedsp/polarberry/Kconfig"
 source "board/sifive/unleashed/Kconfig"
 source "board/sifive/unmatched/Kconfig"
 source "board/sipeed/maix/Kconfig"

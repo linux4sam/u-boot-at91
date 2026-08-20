@@ -1,7 +1,7 @@
 /* SPDX-License-Identifier: GPL-2.0+ */
 /*
- * Copyright (C) 2019 Microchip Technology Inc.
- * Padmarao Begari <padmarao.begari@microchip.com>
+ * Copyright (C) 2026 Microchip Technology Inc.
+ * Shravan Chippa <shravan.chippa@microchip.com>
  */
 
 #ifndef __CONFIG_H
@@ -26,7 +26,7 @@
 #endif
 
 #if defined(CONFIG_CMD_UBIFS)
-#define BOOT_TARGET_DEVICE_UBIFS(func) func(UBIFS, ubifs, 0, ubi, rootfs)
+#define BOOT_TARGET_DEVICE_UBIFS(func)	func(UBIFS, ubifs, 0, ubi, rootfs)
 #else
 #define BOOT_TARGET_DEVICE_UBIFS(func)
 #endif

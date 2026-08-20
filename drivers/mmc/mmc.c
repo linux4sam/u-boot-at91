@@ -633,11 +633,11 @@ static int mmc_switch_voltage(struct mmc *mmc, int signal_voltage)
 
 	/*
 	 * Failure to switch is indicated by the card holding
-	 * dat[0:3] low. Wait for at least 1 ms according to spec
+	 * dat[0:3] low. Wait for at least 2 ms, though spec only says 1 ms
 	 */
-	err = mmc_wait_dat0(mmc, 1, 1000);
+	err = mmc_wait_dat0(mmc, 1, 2000);
 	if (err == -ENOSYS)
-		udelay(1000);
+		udelay(2000);
 	else if (err)
 		return -ETIMEDOUT;
 

@@ -1,16 +1,16 @@
-if TARGET_MICROCHIP_GENERIC
+if TARGET_ARIES_M100PFSEVP
 
 config SYS_BOARD
-	default "mpfs_generic"
+	default "m100pfsevp"
 
 config SYS_VENDOR
-	default "microchip"
+	default "aries"
 
 config SYS_CPU
 	default "mpfs"
 
 config SYS_CONFIG_NAME
-	default "microchip_mpfs_generic"
+	default "m100pfsevp"
 
 config TEXT_BASE
 	default 0x80000000 if !RISCV_SMODE
@@ -32,15 +32,12 @@ config BOARD_SPECIFIC_OPTIONS # dummy
 	imply CMD_MMC
 	imply DOS_PARTITION
 	imply EFI_PARTITION
+	imply IP_DYN
 	imply ISO_PARTITION
 	imply PHY_LIB
 	imply PHY_VITESSE
 	imply MTD_SPI_NAND
 	imply CMD_MTD
+	imply MTD_PARTITIONS
 	imply CMD_MTDPARTS
-	imply DM_MAILBOX
-	imply MPFS_MBOX
-	imply MISC
-	imply MPFS_SYSCONTROLLER
-	imply MPFS_PRIORITISE_QSPI_BOOT
 endif

@@ -26,7 +26,7 @@
 #endif
 
 #if defined(CONFIG_CMD_UBIFS)
-#define BOOT_TARGET_DEVICE_UBIFS(func) func(UBIFS, ubifs, 0, ubi, rootfs)
+#define BOOT_TARGET_DEVICE_UBIFS(func)	func(UBIFS, ubifs, 0, ubi, rootfs)
 #else
 #define BOOT_TARGET_DEVICE_UBIFS(func)
 #endif

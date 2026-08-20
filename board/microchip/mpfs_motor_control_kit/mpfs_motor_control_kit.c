@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: GPL-2.0+
 /*
- * Copyright (C) 2019 Microchip Technology Inc.
- * Padmarao Begari <padmarao.begari@microchip.com>
+ * Copyright (C) 2026 Microchip Technology Inc.
+ * Shravan Chippa <shravan.chippa@microchip.com>
  */
 
 #include <asm/global_data.h>
@@ -16,7 +16,7 @@
 DECLARE_GLOBAL_DATA_PTR;
 
 #define MPFS_SYSREG_SOFT_RESET	((unsigned int *)0x20002088)
-#define PERIPH_RESET_VALUE		0x1e8u
+#define PERIPH_RESET_VALUE		0x800001e8u
 
 #if IS_ENABLED(CONFIG_MPFS_SYSCONTROLLER)
 static unsigned char mac_addr[6];
@@ -128,7 +128,7 @@ int board_late_init(void)
 		return ret;
 	}
 
-	sys_serv_priv = kzalloc(sizeof(*sys_serv_priv), GFP_KERNEL);
+	sys_serv_priv = devm_kzalloc(dev, sizeof(*sys_serv_priv), GFP_KERNEL);
 	if (!sys_serv_priv)
 		return -ENOMEM;
 
