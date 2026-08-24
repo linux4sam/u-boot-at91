@@ -271,6 +271,7 @@
 	assigned-clock-parents = <&pmc PMC_TYPE_CORE 27>; /* MCK1 div */
 	microchip,sdcal-inverted;
 	no-1-8-v;
+	/delete-property/sdhci-caps-mask;
 };
 
 &slow_rc_osc {
