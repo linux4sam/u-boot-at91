@@ -46,6 +46,9 @@ SECTIONS
 
 	__image_copy_end = .;
 	_image_binary_end = .;
+
+	. = ALIGN(8);
+
 	_end = .;
 
 	.bss _image_binary_end (OVERLAY) : {

@@ -42,6 +42,8 @@ SECTIONS
 		. = ALIGN(8);
 	} > .sram
 
+	. = ALIGN(8);
+
 	_image_binary_end = .;
 
 	_end = .;

@@ -1642,6 +1642,8 @@ endif
 
 u-boot-nodtb.bin: u-boot FORCE
 	$(call if_changed,objcopy_uboot)
+# Make sure the size is 8 byte-aligned.
+	@truncate -s %8 $@
 	$(BOARD_SIZE_CHECK)
 
 u-boot.ldr:	u-boot

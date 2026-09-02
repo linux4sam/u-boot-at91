@@ -75,6 +75,8 @@ SECTIONS
 		. = ALIGN(8);
 	} >ram
 
+	. = ALIGN(8);
+
 	PROVIDE (__init_end = .);
 	PROVIDE (reloc_dst_end = .);
 	PROVIDE (_end = .);

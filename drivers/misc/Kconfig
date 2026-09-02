@@ -718,4 +718,11 @@ config SPL_SOCFPGA_DT_REG
 	  Enable register setting from device tree. This also
 	  provides user a clean interface and all register settings are
 	  centralized in one place, device tree.
+
+config MICROCHIP_SFR
+	bool "Enable Microchip SFR"
+	depends on MISC
+	help
+	  test
+
 endmenu

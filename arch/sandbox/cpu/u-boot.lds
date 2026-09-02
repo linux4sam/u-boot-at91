@@ -39,6 +39,12 @@ SECTIONS
 		*(.dynsym)
 		__dyn_sym_end = .;
 	}
+
+	.end :
+	{
+		. = ALIGN(8);
+		*(.__end)
+	}
 }
 
 INSERT BEFORE .data;

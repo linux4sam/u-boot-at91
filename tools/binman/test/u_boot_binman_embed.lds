@@ -18,7 +18,7 @@ SECTIONS
 		*(.text*)
 	}
 
-	. = ALIGN(4);
+	. = ALIGN(8);
 	.data : {
 		dtb_embed_begin = .;
 		KEEP(*(.mydtb));
