@@ -623,6 +623,24 @@ static int macb_sama7g5_clk_init(struct udevice *dev, ulong rate)
 	return clk_enable(&clk);
 }
 
+static int macb_sama7d65_clk_init(struct udevice *dev, ulong rate)
+{
+	struct clk clk;
+	int ret;
+
+	ret = clk_get_by_name(dev, "tx_clk", &clk);
+	if (ret)
+		return ret;
+
+	if (clk.dev) {
+		ret = clk_set_rate(&clk, rate);
+		if (ret < 0)
+			return ret;
+	}
+
+	return clk_enable(&clk);
+}
+
 int __weak macb_linkspd_cb(struct udevice *dev, unsigned int speed)
 {
 #ifdef CONFIG_CLK
@@ -1392,6 +1410,13 @@ static const struct macb_config sifive_config = {
 	.usrio = &macb_default_usrio,
 };
 
+static const struct macb_config sama7d65_gmac_config = {
+	.dma_burst_length = 16,
+	.hw_dma_cap = HW_DMA_CAP_32B,
+	.clk_init = macb_sama7d65_clk_init,
+	.usrio = &sama7g5_usrio,
+};
+
 static const struct macb_config sama7g5_gmac_config = {
 	.dma_burst_length = 16,
 	.hw_dma_cap = HW_DMA_CAP_32B,
@@ -1410,6 +1435,10 @@ static const struct udevice_id macb_eth_ids[] = {
 	{ .compatible = "cdns,macb" },
 	{ .compatible = "cdns,at91sam9260-macb" },
 	{ .compatible = "cdns,sam9x60-macb" },
+	{ .compatible = "microchip,sam9x7-gem",
+	  .data = (ulong)&sama7g5_gmac_config },
+	{ .compatible = "microchip,sama7d65-gem",
+	  .data = (ulong)&sama7d65_gmac_config },
 	{ .compatible = "cdns,sama7g5-gem",
 	  .data = (ulong)&sama7g5_gmac_config },
 	{ .compatible = "cdns,sama7g5-emac",
