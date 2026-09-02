@@ -1,0 +1,7 @@
+SAMA5D3_EDS BOARD
+M:	Jerry Ray <jerry.ray@microchip.com>
+S:	Maintained
+F:	board/atmel/sama5d3_eds/
+F:	include/configs/sama5d3_eds.h
+F:	configs/sama5d3_eds_mmc_defconfig
+F:	configs/sama5d3_eds_nandflash_defconfig
