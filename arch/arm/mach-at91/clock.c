@@ -20,18 +20,13 @@ void at91_periph_clk_enable(int id)
 
 #ifdef CPU_HAS_PCR
 	u32 regval;
-	u32 div_value;
 
 	if (id > AT91_PMC_PCR_PID_MASK)
 		return;
 
 	writel(id, &pmc->pcr);
-
-	div_value = readl(&pmc->pcr) & AT91_PMC_PCR_DIV;
-
-	regval = AT91_PMC_PCR_EN | AT91_PMC_PCR_CMD_WRITE | id | div_value;
-
-	writel(regval, &pmc->pcr);
+	regval = readl(&pmc->pcr);
+	writel(regval | AT91_PMC_PCR_EN | AT91_PMC_PCR_CMD_WRITE, &pmc->pcr);
 #else
 	writel(0x01 << id, &pmc->pcer);
 #endif
@@ -69,6 +64,7 @@ void at91_system_clk_disable(int sys_clk)
 	writel(sys_clk, &pmc->scdr);
 }
 
+#if !(defined(CONFIG_SAMA7G5) || defined(CONFIG_SAMA7D65))
 int at91_upll_clk_enable(void)
 {
 	struct at91_pmc *pmc = (at91_pmc_t *)ATMEL_BASE_PMC;
@@ -121,3 +117,4 @@ void at91_pllicpr_init(u32 icpr)
 
 	writel(icpr, &pmc->pllicpr);
 }
+#endif

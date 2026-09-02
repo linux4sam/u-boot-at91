@@ -7,12 +7,18 @@
 #ifndef __AT91_PMC_H__
 #define __AT91_PMC_H__
 
+#include <dt-bindings/clk/at91.h>
 #include <linux/bitops.h>
 #include <linux/io.h>
 
 /* Keep a range of 256 available clocks for every clock type. */
 #define AT91_TO_CLK_ID(_t, _i)		(((_t) << 8) | ((_i) & 0xff))
 #define AT91_CLK_ID_TO_DID(_i)		((_i) & 0xff)
+
+extern const struct clk_pll_layout at91rm9200_pll_layout;
+extern const struct clk_pll_layout at91sam9g45_pll_layout;
+extern const struct clk_pll_layout at91sam9g20_pllb_layout;
+extern const struct clk_pll_layout sama5d3_pll_layout;
 
 struct clk_range {
 	unsigned long min;
@@ -72,6 +78,7 @@ struct clk_pcr_layout {
 	u32 div_mask;
 	u32 gckcss_mask;
 	u32 pid_mask;
+	bool gclk_status;
 };
 
 struct clk_usbck_layout {
@@ -92,6 +99,7 @@ struct pmc_clk_setup {
 	unsigned int pid;
 	unsigned long rate;
 	unsigned long prate;
+	bool enable;
 };
 
 extern const struct clk_programmable_layout at91rm9200_programmable_layout;
@@ -114,6 +122,14 @@ sam9x60_clk_register_usb(void __iomem *base,  const char *name,
 			 const char * const *parent_names, u8 num_parents,
 			 const struct clk_usbck_layout *usbck_layout,
 			 const u32 *clk_mux_table, const u32 *mux_table, u8 id);
+struct clk *
+at91_clk_register_pll(void __iomem *base, const char *name,
+			const char *parent_name, u8 id,
+			const struct clk_pll_layout *layout,
+			const struct clk_pll_characteristics *characteristics);
+struct clk *
+at91_clk_register_div(void __iomem *base, const char *name,
+			const char *parent_name, u32 bitmask);
 struct clk *
 sam9x60_clk_register_div_pll(void __iomem *base, const char *name,
 			const char *parent_name, u8 id,
@@ -145,6 +161,13 @@ at91_clk_register_utmi(void __iomem *base, struct udevice *dev,
 			const char *name, const char *parent_name);
 struct clk *
 at91_clk_sama7g5_register_utmi(void __iomem *base, const char *name,
+			const char *parent_name);
+struct clk *
+at91sam9x5_clk_register_usb(void __iomem *base, const char *name,
+			const char **parent_names, u8 num_parents,
+			u32 *clk_mux_table);
+struct clk *
+at91sam9n12_clk_register_usb(void __iomem *base, const char *name,
 			const char *parent_name);
 struct clk *
 at91_clk_register_programmable(void __iomem *base, const char *name,

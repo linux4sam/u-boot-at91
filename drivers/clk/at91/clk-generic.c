@@ -33,6 +33,15 @@ struct clk_gck {
 
 #define to_clk_gck(_c) container_of(_c, struct clk_gck, clk)
 
+static inline bool clk_gck_ready(struct clk_gck *gck)
+{
+	unsigned int status;
+
+	pmc_read(gck->base, AT91_PMC_SR, &status);
+
+	return (status & AT91_PMC_GCKRDY);
+}
+
 static int clk_gck_enable(struct clk *clk)
 {
 	struct clk_gck *gck = to_clk_gck(clk);
@@ -43,12 +52,22 @@ static int clk_gck_enable(struct clk *clk)
 			gck->layout->cmd | AT91_PMC_PCR_GCKEN,
 			gck->layout->cmd | AT91_PMC_PCR_GCKEN);
 
+	while (!clk_gck_ready(gck) && gck->layout->gclk_status) {
+		debug("waiting for gclk %d\n", gck->id);
+		cpu_relax();
+	}
+
 	return 0;
 }
 
 static int clk_gck_disable(struct clk *clk)
 {
 	struct clk_gck *gck = to_clk_gck(clk);
+
+	while (!clk_gck_ready(gck) && gck->layout->gclk_status) {
+		debug("waiting for gclk %d\n", gck->id);
+		cpu_relax();
+	}
 
 	pmc_write(gck->base, gck->layout->offset,
 		  (gck->id & gck->layout->pid_mask));
@@ -69,10 +88,12 @@ static int clk_gck_set_parent(struct clk *clk, struct clk *parent)
 	if (index < 0)
 		return index;
 
-	index = at91_clk_mux_index_to_val(gck->mux_table, gck->num_parents,
-					  index);
-	if (index < 0)
-		return index;
+	if (gck->mux_table) {
+		index = at91_clk_mux_index_to_val(gck->mux_table,
+						  gck->num_parents, index);
+		if (index < 0)
+			return index;
+	}
 
 	pmc_write(gck->base, gck->layout->offset,
 		  (gck->id & gck->layout->pid_mask));
@@ -81,6 +102,10 @@ static int clk_gck_set_parent(struct clk *clk, struct clk *parent)
 			(index << (ffs(gck->layout->gckcss_mask) - 1)) |
 			gck->layout->cmd);
 
+	while (!clk_gck_ready(gck) && gck->layout->gclk_status) {
+		debug("waiting for gclk %d\n", gck->id);
+		cpu_relax();
+	}
 	return 0;
 }
 
@@ -151,7 +176,7 @@ at91_clk_register_generic(void __iomem *base,
 	u32 val;
 
 	if (!base || !layout || !name || !parent_names || !num_parents ||
-	    !clk_mux_table || !mux_table || !range)
+	    !clk_mux_table || !range)
 		return ERR_PTR(-EINVAL);
 
 	gck = kzalloc(sizeof(*gck), GFP_KERNEL);
@@ -176,11 +201,15 @@ at91_clk_register_generic(void __iomem *base,
 	val = (val & gck->layout->gckcss_mask) >>
 		(ffs(gck->layout->gckcss_mask) - 1);
 
-	index = at91_clk_mux_val_to_index(gck->mux_table, gck->num_parents,
-					  val);
-	if (index < 0) {
-		kfree(gck);
-		return ERR_PTR(index);
+	if (gck->mux_table) {
+		index = at91_clk_mux_val_to_index(gck->mux_table,
+						  gck->num_parents, val);
+		if (index < 0) {
+			kfree(gck);
+			return ERR_PTR(index);
+		}
+	} else {
+		index = val;
 	}
 
 	ret = clk_register(clk, UBOOT_DM_CLK_AT91_GCK, name,
