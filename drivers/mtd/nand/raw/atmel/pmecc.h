@@ -61,6 +61,7 @@ struct atmel_pmecc_suspend_ctx {
 struct atmel_pmecc {
 	struct udevice *dev;
 	const struct atmel_pmecc_caps *caps;
+	struct clk clk;
 
 	struct {
 		void __iomem *base;
