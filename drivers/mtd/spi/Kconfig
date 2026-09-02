@@ -119,15 +119,6 @@ config SPI_FLASH_SOFT_RESET
 	 Enable support for xSPI Software Reset. It will be used to switch from
 	 Octal DTR mode to legacy mode on shutdown and boot (if enabled).
 
-config SPI_FLASH_SOFT_RESET_ON_BOOT
-	bool "Perform a Software Reset on boot on flashes that boot in stateful mode"
-	depends on SPI_FLASH_SOFT_RESET
-	help
-	 Perform a Software Reset on boot to allow detecting flashes that are
-	 handed to us in Octal DTR mode. Do not enable this config on flashes
-	 that are not supposed to be handed to U-Boot in Octal DTR mode, even
-	 if they _do_ support the Soft Reset sequence.
-
 config SPI_FLASH_BAR
 	bool "SPI flash Bank/Extended address register support"
 	help
@@ -191,6 +182,14 @@ config SPI_FLASH_SILICONKAISER
 	bool "Silicon Kaiser SPI flash support"
 	help
 	  Add support for various Silicon Kaiser SPI flash chips (SK25Lxxx)
+
+config SPI_FLASH_MX66LM1G45G
+	bool "Macronix MX66LM1G45G chip support"
+	depends on SPI_FLASH_MACRONIX
+	help
+	  Add support for the Macronix mx66lm1g45g chip. This is a separate
+	  config because the fixup hooks for this flash add extra size overhead.
+	  Boards that don't use the flash can disable this to save space.
 
 config SPI_FLASH_SPANSION
 	bool "Spansion SPI flash support"

@@ -174,6 +174,7 @@ struct sfdp_header {
 #define BFPT_DWORD18_CMD_EXT_INV		(0x1UL << 29) /* Invert */
 #define BFPT_DWORD18_CMD_EXT_RES		(0x2UL << 29) /* Reserved */
 #define BFPT_DWORD18_CMD_EXT_16B		(0x3UL << 29) /* 16-bit opcode */
+#define BFPT_DWORD18_BYTE_ORDER_SWAPPED		BIT(31)
 
 /* xSPI Profile 1.0 table (from JESD216D.01). */
 #define PROFILE1_DWORD1_RD_FAST_CMD		GENMASK(15, 8)
@@ -278,6 +279,9 @@ void spi_nor_setup_op(const struct spi_nor *nor,
 		 */
 		op->cmd.dtr = op->addr.dtr = op->dummy.dtr =
 			op->data.dtr = true;
+
+		if (spi_nor_protocol_is_dtr_bswap16(proto))
+			op->data.dtr_bswap16 = true;
 
 		/* 2 bytes per clock cycle in DTR mode. */
 		op->dummy.nbytes *= 2;
@@ -478,7 +482,7 @@ static int read_sr(struct spi_nor *nor)
 	u8 val[2];
 	u8 addr_nbytes, dummy;
 
-	if (nor->reg_proto == SNOR_PROTO_8_8_8_DTR) {
+	if (spi_nor_protocol_is_octal_dtr(nor->reg_proto)) {
 		addr_nbytes = nor->rdsr_addr_nbytes;
 		dummy = nor->rdsr_dummy;
 	} else {
@@ -532,7 +536,7 @@ static int read_fsr(struct spi_nor *nor)
 	u8 val[2];
 	u8 addr_nbytes, dummy;
 
-	if (nor->reg_proto == SNOR_PROTO_8_8_8_DTR) {
+	if (spi_nor_protocol_is_octal_dtr(nor->reg_proto)) {
 		addr_nbytes = nor->rdsr_addr_nbytes;
 		dummy = nor->rdsr_dummy;
 	} else {
@@ -2758,6 +2762,9 @@ static int spi_nor_parse_bfpt(struct spi_nor *nor,
 		return -ENOTSUPP;
 	}
 
+	if (bfpt.dwords[BFPT_DWORD(18)] & BFPT_DWORD18_BYTE_ORDER_SWAPPED)
+		nor->flags |= SNOR_F_DTR_BSWAP16;
+
 	return spi_nor_post_bfpt_fixups(nor, bfpt_header, &bfpt, params);
 }
 
@@ -3144,12 +3151,6 @@ static int spi_nor_init_params(struct spi_nor *nor,
 	 */
 	spi_nor_set_pp_settings(&params->page_programs[SNOR_CMD_PP_8_8_8_DTR],
 				SPINOR_OP_PP, SNOR_PROTO_8_8_8_DTR);
-
-	if (info->flags & SPI_NOR_QUAD_READ) {
-		params->hwcaps.mask |= SNOR_HWCAPS_PP_1_1_4;
-		spi_nor_set_pp_settings(&params->page_programs[SNOR_CMD_PP_1_1_4],
-					SPINOR_OP_PP_1_1_4, SNOR_PROTO_1_1_4);
-	}
 
 	/* Select the procedure to set the Quad Enable bit. */
 	if (params->hwcaps.mask & (SNOR_HWCAPS_READ_QUAD |
@@ -3593,7 +3594,10 @@ static int spi_nor_select_erase(struct spi_nor *nor,
 			mtd->erasesize = 4096;
 	} else
 #endif
-	{
+	if (info->flags & SECT_4K_ONLY) {
+		nor->erase_opcode = SPINOR_OP_BE_4K;
+		mtd->erasesize = 4096;
+	} else {
 		nor->erase_opcode = SPINOR_OP_SE;
 		/*
 		 * In parallel-memories the erase operation is
@@ -4334,6 +4338,76 @@ static struct spi_nor_fixups winbond_nor_multi_die_fixups = {
 };
 #endif /* CONFIG_SPI_FLASH_WINBOND */
 
+#ifdef CONFIG_SPI_FLASH_MX66LM1G45G
+static int spi_nor_mx66lm1g45g_octal_dtr_enable(struct spi_nor *nor)
+{
+	struct spi_mem_op op;
+	u8 buf;
+	int ret;
+
+	/* Use 20 dummy cycles for memory array reads. */
+	buf = SPINOR_REG_CR2_DUMMY_20;
+	op = (struct spi_mem_op)
+		SPI_MEM_OP(SPI_MEM_OP_CMD(SPINOR_OP_WRITE_CR2, 1),
+			   SPI_MEM_OP_ADDR(4, SPINOR_REG_CR2_DUMMY_ADDR,
+					   1),
+			   SPI_MEM_OP_NO_DUMMY,
+			   SPI_MEM_OP_DATA_OUT(1, &buf, 1));
+
+	ret = write_enable(nor);
+	if (ret)
+		return ret;
+
+	ret = spi_mem_exec_op(nor->spi, &op);
+	if (ret)
+		return ret;
+
+	ret = spi_nor_wait_till_ready(nor);
+	if (ret)
+		return ret;
+
+	buf = SPINOR_REG_CR2_DTR_OPI_ENABLE;
+	op = (struct spi_mem_op)
+		SPI_MEM_OP(SPI_MEM_OP_CMD(SPINOR_OP_WRITE_CR2, 1),
+			   SPI_MEM_OP_ADDR(4, SPINOR_REG_CR2_MODE_ADDR, 1),
+			   SPI_MEM_OP_NO_DUMMY,
+			   SPI_MEM_OP_DATA_OUT(1, &buf, 1));
+
+	ret = write_enable(nor);
+	if (ret)
+		return ret;
+
+	return spi_mem_exec_op(nor->spi, &op);
+}
+
+static void mx66lm1g45g_late_init(struct spi_nor *nor,
+				  struct spi_nor_flash_parameter *params)
+{
+	nor->octal_dtr_enable = spi_nor_mx66lm1g45g_octal_dtr_enable;
+}
+
+static void mx66lm1g45g_post_sfdp(struct spi_nor *nor,
+				  struct spi_nor_flash_parameter *params)
+{
+	/* Set the Fast Read settings. */
+	params->hwcaps.mask |= SNOR_HWCAPS_READ_8_8_8_DTR;
+	spi_nor_set_read_settings(&params->reads[SNOR_CMD_READ_8_8_8_DTR],
+				  0, 20, SPINOR_OP_MX_DTR_RD,
+				  SNOR_PROTO_8_8_8_DTR);
+
+	params->hwcaps.mask |= SNOR_HWCAPS_PP_8_8_8_DTR;
+
+	nor->cmd_ext_type = SPI_NOR_EXT_INVERT;
+	params->rdsr_dummy = 4;
+	params->rdsr_addr_nbytes = 4;
+}
+
+static struct spi_nor_fixups mx66lm1g45g_fixups = {
+	.late_init = mx66lm1g45g_late_init,
+	.post_sfdp = mx66lm1g45g_post_sfdp,
+};
+#endif /* CONFIG_SPI_FLASH_MX66LM1G45G */
+
 /** spi_nor_octal_dtr_enable() - enable Octal DTR I/O if needed
  * @nor:                 pointer to a 'struct spi_nor'
  *
@@ -4346,8 +4420,8 @@ static int spi_nor_octal_dtr_enable(struct spi_nor *nor)
 	if (!nor->octal_dtr_enable)
 		return 0;
 
-	if (!(nor->read_proto == SNOR_PROTO_8_8_8_DTR &&
-	      nor->write_proto == SNOR_PROTO_8_8_8_DTR))
+	if (!(spi_nor_protocol_is_octal_dtr(nor->read_proto) &&
+	      spi_nor_protocol_is_octal_dtr(nor->write_proto)))
 		return 0;
 
 	if (!(nor->flags & SNOR_F_IO_MODE_EN_VOLATILE))
@@ -4362,9 +4436,31 @@ static int spi_nor_octal_dtr_enable(struct spi_nor *nor)
 	return 0;
 }
 
+static int spi_nor_unlock_global_block_protection(struct spi_nor *nor)
+{
+	int ret;
+
+	write_enable(nor);
+
+	ret = nor->write_reg(nor, SPINOR_OP_GBULK, NULL, 0);
+	if (ret < 0)
+		return ret;
+
+	return spi_nor_wait_till_ready(nor);
+}
+
 static int spi_nor_init(struct spi_nor *nor)
 {
 	int err;
+
+	if (nor->info->flags & UNLOCK_GLOBAL_BLOCK) {
+		err = spi_nor_unlock_global_block_protection(nor);
+		if (err) {
+			dev_err(nor->dev,
+				"Cannot unlock the global block protection\n");
+			return err;
+		}
+	}
 
 	if (nor->flags & SNOR_F_HAS_PARALLEL)
 		nor->spi->flags |= SPI_NOR_ENABLE_MULTI_CS;
@@ -4465,22 +4561,22 @@ static int spi_nor_soft_reset(struct spi_nor *nor)
 			SPI_MEM_OP_NO_DUMMY,
 			SPI_MEM_OP_NO_ADDR,
 			SPI_MEM_OP_NO_DATA);
-	spi_nor_setup_op(nor, &op, SNOR_PROTO_8_8_8_DTR);
+	spi_nor_setup_op(nor, &op, nor->reg_proto);
 	ret = spi_mem_exec_op(nor->spi, &op);
 	if (ret) {
 		dev_warn(nor->dev, "Software reset enable failed: %d\n", ret);
-		goto out;
+		return ret;
 	}
 
 	op = (struct spi_mem_op)SPI_MEM_OP(SPI_MEM_OP_CMD(SPINOR_OP_SRST, 0),
 			SPI_MEM_OP_NO_DUMMY,
 			SPI_MEM_OP_NO_ADDR,
 			SPI_MEM_OP_NO_DATA);
-	spi_nor_setup_op(nor, &op, SNOR_PROTO_8_8_8_DTR);
+	spi_nor_setup_op(nor, &op, nor->reg_proto);
 	ret = spi_mem_exec_op(nor->spi, &op);
 	if (ret) {
 		dev_warn(nor->dev, "Software reset failed: %d\n", ret);
-		goto out;
+		return ret;
 	}
 
 	/*
@@ -4490,17 +4586,14 @@ static int spi_nor_soft_reset(struct spi_nor *nor)
 	 */
 	udelay(SPI_NOR_SRST_SLEEP_LEN);
 
-out:
-	nor->cmd_ext_type = ext;
-	return ret;
+	return 0;
 }
 #endif /* CONFIG_SPI_FLASH_SOFT_RESET */
 
 int spi_nor_remove(struct spi_nor *nor)
 {
 #ifdef CONFIG_SPI_FLASH_SOFT_RESET
-	if (nor->info->flags & SPI_NOR_OCTAL_DTR_READ &&
-	    nor->flags & SNOR_F_SOFT_RESET)
+	if (nor->flags & SNOR_F_SOFT_RESET)
 		return spi_nor_soft_reset(nor);
 #endif
 
@@ -4565,6 +4658,23 @@ void spi_nor_set_fixups(struct spi_nor *nor)
 		}
 	}
 #endif /* SPI_FLASH_WINBOND */
+
+#ifdef CONFIG_SPI_FLASH_MX66LM1G45G
+	if (!strcmp(nor->info->name, "mx66lm1g45g"))
+		nor->fixups = &mx66lm1g45g_fixups;
+#endif
+}
+
+static void spi_nor_set_dtr_bswap16_ops(struct spi_nor *nor,
+					struct spi_nor_flash_parameter *params)
+{
+	if (params->hwcaps.mask & (SNOR_HWCAPS_READ_8_8_8_DTR |
+				   SNOR_HWCAPS_PP_8_8_8_DTR)) {
+		params->reads[SNOR_CMD_READ_8_8_8_DTR].proto |=
+			SNOR_PROTO_IS_DTR_BSWAP16;
+		params->page_programs[SNOR_CMD_PP_8_8_8_DTR].proto |=
+			SNOR_PROTO_IS_DTR_BSWAP16;
+	}
 }
 
 int spi_nor_scan(struct spi_nor *nor)
@@ -4591,33 +4701,6 @@ int spi_nor_scan(struct spi_nor *nor)
 	nor->write_reg = spi_nor_write_reg;
 
 	nor->setup = spi_nor_default_setup;
-
-#ifdef CONFIG_SPI_FLASH_SOFT_RESET_ON_BOOT
-	/*
-	 * When the flash is handed to us in a stateful mode like 8D-8D-8D, it
-	 * is difficult to detect the mode the flash is in. One option is to
-	 * read SFDP in all modes and see which one gives the correct "SFDP"
-	 * signature, but not all flashes support SFDP in 8D-8D-8D mode.
-	 *
-	 * Further, even if you detect the mode of the flash via SFDP, you
-	 * still have the problem of actually reading the ID. The Read ID
-	 * command is not standardized across flash vendors. Flashes can have
-	 * different dummy cycles needed for reading the ID. Some flashes even
-	 * expect a 4-byte dummy address with the Read ID command. All this
-	 * information cannot be obtained from the SFDP table.
-	 *
-	 * So, perform a Software Reset sequence before reading the ID and
-	 * initializing the flash. A Soft Reset will bring back the flash in
-	 * its default protocol mode assuming no non-volatile configuration was
-	 * set. This will let us detect the flash even if ROM hands it to us in
-	 * Octal DTR mode.
-	 *
-	 * To accommodate cases where there is more than one flash on a board,
-	 * and only one of them needs a soft reset, failure to reset is not
-	 * made fatal, and we still try to read ID if possible.
-	 */
-	spi_nor_soft_reset(nor);
-#endif /* CONFIG_SPI_FLASH_SOFT_RESET_ON_BOOT */
 
 	info = spi_nor_read_id(nor);
 	if (IS_ERR_OR_NULL(info))
@@ -4683,6 +4766,15 @@ int spi_nor_scan(struct spi_nor *nor)
 
 	if (info->flags & SPI_NOR_NO_ERASE)
 		mtd->flags |= MTD_NO_ERASE;
+
+	if (info->flags & SPI_NOR_SOFT_RESET)
+		nor->flags |= SNOR_F_SOFT_RESET;
+
+	if (info->flags & SPI_NOR_DTR_BSWAP16)
+		nor->flags |= SNOR_F_DTR_BSWAP16;
+
+	if (nor->flags & SNOR_F_DTR_BSWAP16)
+		spi_nor_set_dtr_bswap16_ops(nor, &params);
 
 	nor->page_size = params.page_size;
 	mtd->writebufsize = nor->page_size;

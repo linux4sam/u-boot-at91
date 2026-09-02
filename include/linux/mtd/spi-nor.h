@@ -76,6 +76,7 @@
 #define SPINOR_OP_RDEAR		0xc8	/* Read Extended Address Register */
 #define SPINOR_OP_WREAR		0xc5	/* Write Extended Address Register */
 #define SPINOR_OP_SRSTEN	0x66	/* Software Reset Enable */
+#define SPINOR_OP_GBULK		0x98	/* Global Block Unlock Protection */
 #define SPINOR_OP_SRST		0x99	/* Software Reset */
 
 /* 4-byte address opcodes - used on Spansion and some Macronix flashes. */
@@ -135,6 +136,14 @@
 #define SPINOR_REG_MXIC_CR2_DC		0x00000300	/* For setting dummy cycles */
 #define SPINOR_REG_MXIC_DC_20		0x0		/* Setting dummy cycles to 20 */
 #define MXIC_MAX_DC			20		/* Maximum value of dummy cycles */
+#define SPINOR_OP_READ_CR2		0x71
+#define SPINOR_OP_WRITE_CR2		0x72
+#define SPINOR_OP_MX_DTR_RD		0xee
+#define SPINOR_REG_CR2_MODE_ADDR	0
+#define SPINOR_REG_CR2_DTR_OPI_ENABLE	BIT(1)
+#define SPINOR_REG_CR2_SPI		0
+#define SPINOR_REG_CR2_DUMMY_ADDR	0x300
+#define SPINOR_REG_CR2_DUMMY_20		0
 
 /* Used for Spansion flashes only. */
 #define SPINOR_OP_BRWR		0x17	/* Bank register write */
@@ -233,6 +242,11 @@
 	 SNOR_PROTO_DATA_MASK)
 
 #define SNOR_PROTO_IS_DTR	BIT(24)	/* Double Transfer Rate */
+/*
+ * Byte order of 16-bit words is swapped when read or written in DTR mode
+ * compared to STR mode.
+ */
+#define SNOR_PROTO_IS_DTR_BSWAP16	BIT(25)
 
 #define SNOR_PROTO_STR(_inst_nbits, _addr_nbits, _data_nbits)	\
 	(SNOR_PROTO_INST(_inst_nbits) |				\
@@ -264,6 +278,18 @@ enum spi_nor_protocol {
 static inline bool spi_nor_protocol_is_dtr(enum spi_nor_protocol proto)
 {
 	return !!(proto & SNOR_PROTO_IS_DTR);
+}
+
+static inline bool spi_nor_protocol_is_octal_dtr(enum spi_nor_protocol proto)
+{
+	return ((proto & SNOR_PROTO_8_8_8_DTR) == SNOR_PROTO_8_8_8_DTR);
+}
+
+static inline bool spi_nor_protocol_is_dtr_bswap16(enum spi_nor_protocol proto)
+{
+	u32 mask = SNOR_PROTO_IS_DTR | SNOR_PROTO_IS_DTR_BSWAP16;
+
+	return ((proto & mask) == mask);
 }
 
 static inline u8 spi_nor_get_protocol_inst_nbits(enum spi_nor_protocol proto)
@@ -315,6 +341,7 @@ enum spi_nor_option_flags {
 	SNOR_F_HAS_STACKED	= 0,
 	SNOR_F_HAS_PARALLEL	= 0,
 #endif
+	SNOR_F_DTR_BSWAP16	= BIT(11),
 };
 
 struct spi_nor;
