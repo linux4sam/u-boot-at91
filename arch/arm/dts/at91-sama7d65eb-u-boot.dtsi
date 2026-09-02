@@ -1,0 +1,125 @@
+// SPDX-License-Identifier: (GPL-2.0+ OR MIT)
+/*
+ *  at91-sama7d65eb-u-boot.dtsi - Device Tree Include file for
+ *  SAMA7D65EB board
+ *
+ *  Copyright (c) 2024 Microchip Technology Inc. and its subsidiaries
+ *
+ *  Author: Ryan Wanner <ryan.wanner@microchip.com>
+ */
+
+/{
+	chosen {
+		bootph-all;
+	};
+
+	soc {
+		bootph-all;
+
+		sdmmc2: mmc@e120c000 {
+			compatible = "microchip,sama7d65-sdhci", "microchip,sama7g5-sdhci", "microchip,sam9x60-sdhci";
+			reg = <0xe120c000 0x4000>;
+			interrupts = <GIC_SPI 77 IRQ_TYPE_LEVEL_HIGH>;
+			clocks = <&pmc PMC_TYPE_PERIPHERAL 77>, <&pmc PMC_TYPE_GCK 77>;
+			clock-names = "hclock", "multclk";
+			assigned-clock-parents = <&pmc PMC_TYPE_CORE 27>; /* MCK1 div */
+			assigned-clocks = <&pmc PMC_TYPE_GCK 77>;
+			assigned-clock-rates = <200000000>;
+			microchip,sdcal-inverted;
+			bus-width = <4>;
+			no-1-8-v;
+			sdhci-caps-mask = <0x0 0x00200000>;
+			pinctrl-names = "default";
+			pinctrl-0 = <&pinctrl_sdmmc2_default>;
+			status = "okay";
+		};
+
+		tcb0: timer@e2014000{
+			compatible = "microchip,sama7d65-tcb", "atmel,sama5d2-tcb", "simple-mfd", "syscon";
+			#address-cells = <1>;
+			#size-cells = <0>;
+			reg = <0xe2014000 0x100>;
+			interrupts = <GIC_SPI 83 IRQ_TYPE_LEVEL_HIGH>, <GIC_SPI 84 IRQ_TYPE_LEVEL_HIGH>, <GIC_SPI 85 IRQ_TYPE_LEVEL_HIGH>;
+			clocks = <&pmc PMC_TYPE_PERIPHERAL 83>, <&pmc PMC_TYPE_PERIPHERAL 84>, <&pmc PMC_TYPE_PERIPHERAL 85>, <&clk32k 1>;
+			clock-names = "t0_clk", "t1_clk", "t2_clk", "slow_clk";
+
+			timer0: timer@0 {
+				compatible = "atmel,tcb-timer";
+				reg = <0>;
+			};
+
+			timer1: timer@1 {
+				compatible = "atmel,tcb-timer";
+				reg = <1>;
+			};
+		};
+	};
+};
+
+&dma0 {
+	bootph-all;
+};
+
+&dma1 {
+	bootph-all;
+};
+
+&dma2 {
+	bootph-all;
+};
+
+&flx4 {
+	bootph-all;
+};
+
+&flx5 {
+	bootph-all;
+};
+
+&i2c5 {
+	bootph-all;
+};
+
+&pioa {
+	bootph-all;
+
+	pinctrl_sdmmc2_default: sdmmc2_default {
+		cmd_data {
+			pinmux = <PIN_PC27__SDMMC2_CMD>,
+				 <PIN_PC29__SDMMC2_DAT0>,
+				 <PIN_PC30__SDMMC2_DAT1>,
+				 <PIN_PC31__SDMMC2_DAT2>,
+				 <PIN_PD0__SDMMC2_DAT3>;
+			slew-rate = <0>;
+			bias-pull-up;
+		};
+
+		ck_cd_vddsel{
+			pinmux = <PIN_PC28__SDMMC2_CK>,
+				 <PIN_PD3__SDMMC2_1V8SEL>,
+				 <PIN_PD2__SDMMC2_CD>;
+			slew-rate = <0>;
+			bias-pull-up;
+		};
+	};
+};
+
+&pinctrl_flx4_default {
+	bootph-all;
+};
+
+&pinctrl_i2c5_default {
+	bootph-all;
+};
+
+&pit64b0 {
+	bootph-all;
+};
+
+&pmc {
+	bootph-all;
+};
+
+&uart4 {
+	bootph-all;
+};

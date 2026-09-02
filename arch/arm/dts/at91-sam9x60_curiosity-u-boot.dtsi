@@ -51,6 +51,10 @@
 	bootph-all;
 };
 
+&hlcdc {
+	bootph-all;
+};
+
 &main_rc {
 	bootph-all;
 };

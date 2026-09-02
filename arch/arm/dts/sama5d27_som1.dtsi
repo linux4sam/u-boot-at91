@@ -57,6 +57,16 @@
 		spi0 = &qspi1;
 	};
 
+	clocks {
+		slow_xtal: slow_xtal {
+			clock-frequency = <32768>;
+		};
+
+		main_xtal: main_xtal {
+			clock-frequency = <24000000>;
+		};
+	};
+
 	ahb {
 		apb {
 			qspi1: spi@f0024000 {
@@ -68,7 +78,7 @@
 				spi_flash@0 {
 					compatible = "jedec,spi-nor";
 					reg = <0>;
-					spi-max-frequency = <50000000>;
+					spi-max-frequency = <80000000>;
 					spi-rx-bus-width = <4>;
 					spi-tx-bus-width = <4>;
 					bootph-all;

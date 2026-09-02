@@ -2,6 +2,9 @@
 #include <dt-bindings/gpio/gpio.h>
 #include "sama5d2.dtsi"
 #include "sama5d2-pinfunc.h"
+#ifdef CONFIG_CLK_SCMI
+#include "sama5d2-optee.dtsi"
+#endif
 
 / {
 	model = "Atmel SAMA5D2 Xplained";
@@ -13,7 +16,21 @@
 	};
 
 	memory {
+#ifdef CONFIG_CLK_SCMI
+		reg = <0x22000000 0x1E000000>;
+#else
 		reg = <0x20000000 0x20000000>;
+#endif
+	};
+
+	clocks {
+		slow_xtal: slow_xtal {
+			clock-frequency = <32768>;
+		};
+
+		main_xtal: main_xtal {
+			clock-frequency = <12000000>;
+		};
 	};
 
 	onewire_tm: onewire {
@@ -92,7 +109,7 @@
 				flash@0 {
 					compatible = "jedec,spi-nor";
 					reg = <0>;
-					spi-max-frequency = <83000000>;
+					spi-max-frequency = <80000000>;
 					spi-rx-bus-width = <4>;
 					spi-tx-bus-width = <4>;
 					bootph-all;

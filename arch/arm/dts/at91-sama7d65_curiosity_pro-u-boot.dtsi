@@ -1,36 +1,14 @@
 // SPDX-License-Identifier: (GPL-2.0+ OR MIT)
 /*
- *  at91-sama7d65_curiosity-u-boot.dtsi - Device Tree Include file for
- *  SAMA7D65 CURIOSITY.
+ *  at91-sama7d65_curiosity_pro-u-boot.dtsi - Device Tree Include file for
+ *  SAMA7D65 CURIOSITY PRO.
  *
- *  Copyright (c) 2023 Microchip Technology Inc. and its subsidiaries
+ *  Copyright (c) 2026 Microchip Technology Inc. and its subsidiaries
  *
- *  Author: Ryan Wanner <ryan.wanner@microchip.com>
+ *  Author: Varshini Rajendran <varshini.rajendran@microchip.com>
  */
 
 /{
-	aliases {
-		serial0 = &uart6;
-	};
-
-	chosen {
-		bootph-all;
-	};
-
-	clocks {
-		slow_rc_osc: slow_rc_osc {
-			compatible = "fixed-clock";
-			#clock-cells = <0>;
-			clock-frequency = <32000>;
-		};
-	};
-
-	cpus {
-		cpu@0 {
-			clocks = <&pmc PMC_TYPE_CORE 8>, <&pmc PMC_TYPE_CORE 26>, <&main_xtal>;
-			clock-names = "cpu", "master", "xtal";
-		};
-	};
 
 	soc {
 		bootph-all;
@@ -128,100 +106,8 @@
 	};
 };
 
-&clk32k {
-	clocks = <&slow_rc_osc>, <&slow_xtal>;
-};
-
-&flx0 {
-	atmel,flexcom-mode = <ATMEL_FLEXCOM_MODE_TWI>;
-	status = "okay";
-};
-
-&i2c0 {
-	pinctrl-names = "default";
-	pinctrl-0 = <&pinctrl_i2c0_default>;
-	i2c-analog-filter;
-	i2c-digital-filter;
-	i2c-digital-filter-width-ns = <35>;
-	status = "okay";
-
-	eeprom@53 {
-		compatible = "atmel,24c01";
-		reg = <0x53>;
-		pagesize = <8>;
-		status = "okay";
-	};
-};
-
-&gmac1 {
-	#address-cells = <1>;
-	#size-cells = <0>;
-	pinctrl-names = "default";
-	pinctrl-0 = <&pinctrl_gmac1_default
-		     &pinctrl_gmac1_mdc_default
-		     &pinctrl_gmac1_mdio_default
-		     &pinctrl_gmac1_txck_default
-		     &pinctrl_gmac1_phy_irq>;
-	phy-mode = "rgmii-id";
-	status = "okay";
-
-	ethernet-phy@1 {
-		reg = <0x1>;
-		interrupt-parent = <&pioa>;
-		interrupts = <PIN_PE3 IRQ_TYPE_LEVEL_LOW>;
-		status = "okay";
-	};
-};
-
-&main_xtal {
-	bootph-all;
-};
-
 &pioa {
 	bootph-all;
-
-	pinctrl_gmac1_default: gmac1-default{
-		pinmux = <PIN_PD22__G1_TX0>,
-			 <PIN_PD23__G1_TX1>,
-			 <PIN_PE0__G1_TX2>,
-			 <PIN_PE1__G1_TX3>,
-			 <PIN_PD27__G1_RX0>,
-			 <PIN_PD28__G1_RX1>,
-			 <PIN_PD30__G1_RX2>,
-			 <PIN_PD31__G1_RX3>,
-			 <PIN_PD21__G1_TXCTL>,
-			 <PIN_PE2__G1_RXCK>,
-			 <PIN_PD24__G1_RXCTL>;
-		slew-rate = <0>;
-		bias-disable;
-	};
-
-	pinctrl_gmac1_mdc_default: gmac1-mdc-default {
-		pinmux = <PIN_PD25__G1_MDC>;
-		bias-disable;
-	};
-
-	pinctrl_gmac1_mdio_default: gmac1-mdio-default {
-		pinmux = <PIN_PD26__G1_MDIO>;
-		bias-pull-up; /* if R30 is not mounted on LAN8840 EDS2 Daughter Card */
-	};
-
-	pinctrl_gmac1_phy_irq: gmac1-phy-irq {
-		pinmux = <PIN_PE3__GPIO>;
-		bias-disable;
-	};
-
-	pinctrl_gmac1_txck_default: gmac1-txck-default {
-		pinmux = <PIN_PD29__G1_REFCK>;
-		slew-rate = <0>;
-		bias-pull-up;
-	};
-
-	pinctrl_i2c0_default: i2c0-default {
-		pinmux = <PIN_PC7__FLEXCOM0_IO0>,
-			 <PIN_PC6__FLEXCOM0_IO1>;
-		bias-disable;
-	};
 
 	pinctrl_nand_default: nand-default {
 		pinmux = <PIN_PA0__NWER0>,
@@ -253,35 +139,4 @@
 		atmel,drive-strength = <ATMEL_PIO_DRVSTR_2>;
 		slew-rate = <0>;
 	};
-};
-
-&pinctrl_uart6_default {
-	bootph-all;
-};
-
-&pit64b0 {
-	bootph-all;
-};
-
-&pmc {
-	bootph-all;
-};
-
-&sdmmc1 {
-	assigned-clock-parents = <&pmc PMC_TYPE_CORE 27>; /* MCK1 div */
-	microchip,sdcal-inverted;
-	no-1-8-v;
-	/delete-property/sdhci-caps-mask;
-};
-
-&slow_rc_osc {
-	bootph-all;
-};
-
-&slow_xtal {
-	bootph-all;
-};
-
-&uart6 {
-	bootph-all;
 };

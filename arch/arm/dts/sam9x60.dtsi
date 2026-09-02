@@ -44,7 +44,7 @@
 		slow_rc_osc: slow_rc_osc {
 			compatible = "fixed-clock";
 			#clock-cells = <0>;
-			clock-frequency = <18500>;
+			clock-frequency = <32000>;
 		};
 
 		main_rc: main_rc {
@@ -188,6 +188,13 @@
 				reg = <0xf802c000 0x100>;
 				clock-names = "hclk", "pclk";
 				clocks = <&pmc PMC_TYPE_PERIPHERAL 24>, <&pmc PMC_TYPE_PERIPHERAL 24>;
+				status = "disabled";
+			};
+
+			hlcdc: hlcdc@f8038000 {
+				compatible = "microchip,sam9x60-hlcdc", "atmel,at91sam9x5-hlcdc";
+				reg = <0xf8038000 0x4000>;
+				clocks = <&pmc PMC_TYPE_PERIPHERAL 25>, <&pmc PMC_TYPE_GCK 25>;
 				status = "disabled";
 			};
 
