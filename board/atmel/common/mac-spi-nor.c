@@ -95,33 +95,51 @@ static int sst26vf064beui_get_ethaddr(const u8 *manufacturer_sfdp,
 /**
  * at91_spi_nor_set_ethaddr() - Retrieve and set the ethernet address from the
  * SPI NOR manufacturer specific SFDP table.
+ * @ethaddr_name:	string containing the name of the environment variable
+ *			to store the mac address into.
  */
-void at91_spi_nor_set_ethaddr(void)
+void at91_spi_nor_set_ethaddr(const char *ethaddr_name)
 {
 	struct udevice *dev;
 	struct spi_nor *nor;
-	const char *ethaddr_name = "ethaddr";
 	u8 ethaddr[ETH_ADDR_SIZE] = {0};
+	int ret;
 
 	if (env_get(ethaddr_name))
 		return;
 
-	if (uclass_first_device_err(UCLASS_SPI_FLASH, &dev))
+	ret = uclass_first_device_err(UCLASS_SPI_FLASH, &dev);
+	if (ret) {
+		printf("Error: SPI FLASH: %d\n", ret);
 		return;
+	}
 
 	nor = dev_get_uclass_priv(dev);
-	if (!nor)
+	if (!nor) {
+		printf("Error: SPI FLASH: NULL, cannot get dev\n");
 		return;
+	}
 
-	if (!nor->manufacturer_sfdp)
+	if (!nor->manufacturer_sfdp) {
+		printf("Error: SPI FLASH: Cannot get manufacturer SFDP table\n");
 		return;
+	}
 
 #ifdef CONFIG_SPI_FLASH_SST
-	if (sst26vf064beui_get_ethaddr(nor->manufacturer_sfdp, ethaddr,
-				       ETH_ADDR_SIZE))
+	ret = sst26vf064beui_get_ethaddr(nor->manufacturer_sfdp,
+					 ethaddr,
+					 ETH_ADDR_SIZE);
+	if (ret) {
+		printf("Error: Cannot read MAC address\n");
 		return;
+	}
 #endif
 
-	if (is_valid_ethaddr(ethaddr))
-		eth_env_set_enetaddr(ethaddr_name, ethaddr);
+	ret = is_valid_ethaddr(ethaddr);
+	if (!ret) {
+		printf("Error: Invalid MAC address\n");
+		return;
+	}
+
+	eth_env_set_enetaddr(ethaddr_name, ethaddr);
 }

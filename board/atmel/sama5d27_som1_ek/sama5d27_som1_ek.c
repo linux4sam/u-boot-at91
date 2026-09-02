@@ -80,11 +80,6 @@ int dram_init_banksize(void)
 	return fdtdec_setup_memory_banksize();
 }
 
-int dram_init(void)
-{
-	return fdtdec_setup_mem_size_base();
-}
-
 #define MAC24AA_MAC_OFFSET	0xfa
 
 #ifdef CONFIG_MISC_INIT_R

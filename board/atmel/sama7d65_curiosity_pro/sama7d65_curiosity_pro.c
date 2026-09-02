@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: GPL-2.0+
 /*
- * Copyright (C) 2024 Microchip Technology, Inc. and its subsidiaries
+ * Copyright (C) 2025 Microchip Technology, Inc. and its subsidiaries
  *
  * Author: Ryan Wanner <ryan.wanner@microchip.com>
  *
@@ -63,17 +63,23 @@ void board_debug_uart_init(void)
 }
 #endif
 
+int board_early_init_f(void)
+{
+	return 0;
+}
+
 #define MAC24AA_MAC_OFFSET     0xfa
 
 #if (IS_ENABLED(CONFIG_MISC_INIT_R))
 int misc_init_r(void)
 {
 #if (IS_ENABLED(CONFIG_I2C_EEPROM))
-	at91_set_eeprom_ethaddr(ETH_MAC_EEPROM, "ethaddr", MAC24AA_MAC_OFFSET);
+	at91_set_eeprom_ethaddr(ETH_MAC_EEPROM, "eth1addr", MAC24AA_MAC_OFFSET);
 #endif
 #if (IS_ENABLED(CONFIG_SPI_FLASH_SFDP_SUPPORT))
-	at91_spi_nor_set_ethaddr("eth1addr");
+	at91_spi_nor_set_ethaddr("ethaddr");
 #endif
+
 	return 0;
 }
 #endif

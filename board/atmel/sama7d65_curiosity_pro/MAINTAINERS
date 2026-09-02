@@ -1,0 +1,8 @@
+SAMA7D65 CURIOSITY PRO BOARD
+M:     Ryan Wanner <ryan.wanner@microchip.com>
+S:     Maintained
+F:     board/atmel/sama7d65_curiosity_pro.c
+F:     include/configs/sama7d65_curiosity_pro.h
+F:     configs/sama7d65_curiosity_pro_mmc1_defconfig
+F:     configs/sama7d65_curiosity_pro_nandflash_defconfig
+F:     configs/sama7d65_curiosity_pro_qspiflash_defconfig

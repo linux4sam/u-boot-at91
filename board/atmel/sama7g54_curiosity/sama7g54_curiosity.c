@@ -14,6 +14,9 @@
 #include <asm/arch/gpio.h>
 #include <asm/arch/sama7g5.h>
 
+#define ETH_MAC_EEPROM		"eeprom@51"
+#define MAC24AA_MAC_OFFSET	0xfa
+
 DECLARE_GLOBAL_DATA_PTR;
 
 int board_init(void)
@@ -28,6 +31,16 @@ int dram_init_banksize(void)
 {
 	return fdtdec_setup_memory_banksize();
 }
+
+#if (IS_ENABLED(CONFIG_MISC_INIT_R))
+int misc_init_r(void)
+{
+#if (IS_ENABLED(CONFIG_I2C_EEPROM))
+	at91_set_eeprom_ethaddr(ETH_MAC_EEPROM, "ethaddr", MAC24AA_MAC_OFFSET);
+#endif
+	return 0;
+}
+#endif
 
 int dram_init(void)
 {

@@ -15,6 +15,7 @@ obj-$(CONFIG_ATMEL_SFR) += atmel_sfr.o
 endif
 
 obj-y += clock.o
+obj-y += dram.o
 obj-$(CONFIG_CPU_ARM920T)	+= arm920t/
 obj-$(CONFIG_CPU_ARM926EJS)	+= arm926ejs/
 obj-$(CONFIG_CPU_V7A)		+= armv7/
