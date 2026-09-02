@@ -343,6 +343,16 @@ config PHY_XILINX_ZYNQMP
 	  Enable this to support ZynqMP High Speed Gigabit Transceiver
 	  that is part of ZynqMP SoC.
 
+config PHY_MICROCHIP_SAMA7_USB
+       tristate "Microchip SAMA7 USB 2.0 PHY"
+       depends on PHY && ARCH_AT91
+       help
+	 Enable this to support SAMA7 USB 2.0 PHY.
+
+	 The USB 2.0 PHY integrates high-speed, full-speed and low-speed
+	 termination and signal switching. With a single resistor, it
+	 requires minimal external components.
+
 source "drivers/phy/rockchip/Kconfig"
 source "drivers/phy/cadence/Kconfig"
 source "drivers/phy/ti/Kconfig"
